@@ -1,0 +1,10 @@
+.idea
+*.iml
+target
+out
+
+pom.xml.releaseBackup
+release.properties
+app.properties
+app.log
+applog.log
