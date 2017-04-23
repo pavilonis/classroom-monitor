@@ -48,6 +48,11 @@
          <artifactId>utils</artifactId>
          <version>0.12-SNAPSHOT</version>
       </dependency>
+      <dependency>
+         <groupId>org.apache.commons</groupId>
+         <artifactId>commons-collections4</artifactId>
+         <version>4.1</version>
+      </dependency>
 
       <!-- LOGGING -->
       <dependency>
@@ -79,7 +84,7 @@
             <configuration>
                <descriptorRefs>
                   <descriptorRef>jar-with-dependencies</descriptorRef>
-                  <descriptorRef>{$project.name}-{$project.version}</descriptorRef>
+                  <!--<descriptorRef>{$project.name}-{$project.version}</descriptorRef>-->
                </descriptorRefs>
                <archive>
                   <manifest>

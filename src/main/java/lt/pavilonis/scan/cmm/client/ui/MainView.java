@@ -1,13 +1,14 @@
 package lt.pavilonis.scan.cmm.client.ui;
 
+import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import lt.pavilonis.scan.cmm.client.App;
 import lt.pavilonis.scan.cmm.client.representation.ClassroomOccupancy;
 import lt.pavilonis.scan.cmm.client.service.WsRestClient;
@@ -17,7 +18,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class MainView extends BorderPane {
@@ -26,7 +29,7 @@ public class MainView extends BorderPane {
    private final static String FONT = "SansSerif";
    private final static int GRID_SIZE = 24;
    private final static int GRID_COLUMNS = 6;
-   private final List<VBox> nodes = initEmptyNodes();
+   private final List<ClassroomNode> nodes = initEmptyNodes();
 
    private final WsRestClient wsClient;
 
@@ -37,38 +40,76 @@ public class MainView extends BorderPane {
       setBottom(new Footer());
    }
 
-   @Scheduled(fixedRate = 5000)
+   @Scheduled(fixedRate = 5_000)
    public void updateNodes() {
       wsClient.load(response -> {
          if (response.isPresent()) {
-            ClassroomOccupancy[] classroomOccupancies = response.get();
 
-            for (int i = 0; i < GRID_SIZE; i++) {
-               VBox node = nodes.get(i);
-               node.getChildren().clear();
-               if (i < classroomOccupancies.length) {
-                  ClassroomOccupancy item = classroomOccupancies[i];
-                  node.setStyle(item.isOccupied() ? "-fx-background-color: red" : "-fx-background-color: green");
-                  node.getChildren().add(createLabel(item));
-               } else {
-                  node.setStyle("-fx-background-color: white");
-               }
-            }
+            List<ClassroomOccupancy> items = Arrays.asList(response.get());
+            items.sort((i1, i2) -> Integer.compare(i1.getClassroomNumber(), i2.getClassroomNumber()));
+
+            regularUpdate(items);
+//            animatedUpdate(items);
+
          } else {
             App.displayWarning("No response from server!");
          }
       });
    }
 
-   private List<VBox> initEmptyNodes() {
-      ArrayList<VBox> result = new ArrayList<>(GRID_SIZE);
+   private void regularUpdate(List<ClassroomOccupancy> items) {
       for (int i = 0; i < GRID_SIZE; i++) {
-         result.add(new VBox());
+
+         ClassroomNode node = nodes.get(i);
+
+         Optional<ClassroomOccupancy> item = i < items.size() ? Optional.of(items.get(i)) : Optional.empty();
+
+         updateNode(node, item);
+      }
+   }
+
+   private void animatedUpdate(List<ClassroomOccupancy> items) {
+      FadeTransition transition = new FadeTransition(Duration.seconds(2), this);
+      transition.setFromValue(1);
+      transition.setToValue(0);
+      transition.setOnFinished(event -> {
+         for (int i = 0; i < GRID_SIZE; i++) {
+
+            ClassroomNode node = nodes.get(i);
+
+            Optional<ClassroomOccupancy> item = i < items.size() ? Optional.of(items.get(i)) : Optional.empty();
+
+            updateNode(node, item);
+         }
+         transition.setFromValue(0);
+         transition.setToValue(1);
+         transition.setOnFinished(null);
+         transition.play();
+      });
+      transition.play();
+   }
+
+   private void updateNode(ClassroomNode node, Optional<ClassroomOccupancy> item) {
+      node.getChildren().clear();
+
+      if (item.isPresent()) {
+         node.setStyle(item.get().isOccupied() ? "-fx-background-color: red" : "-fx-background-color: green");
+         node.getChildren().add(createLabel(item.get()));
+
+      } else {
+         node.setStyle("-fx-background-color: white");
+      }
+   }
+
+   private List<ClassroomNode> initEmptyNodes() {
+      ArrayList<ClassroomNode> result = new ArrayList<>(GRID_SIZE);
+      for (int i = 0; i < GRID_SIZE; i++) {
+         result.add(new ClassroomNode());
       }
       return result;
    }
 
-   private GridPane createGrid(List<VBox> nodes) {
+   private Node createGrid(List<? extends Node> nodes) {
       GridPane grid = new GridPane();
       grid.setHgap(40);
       grid.setVgap(106);
@@ -79,7 +120,7 @@ public class MainView extends BorderPane {
          int row = i / GRID_COLUMNS;
          int column = i - row * GRID_COLUMNS;
 
-         VBox node = nodes.get(i);
+         Node node = nodes.get(i);
          grid.add(node, column, row);
       }
       return grid;
