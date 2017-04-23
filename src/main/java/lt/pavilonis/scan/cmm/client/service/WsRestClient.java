@@ -83,14 +83,9 @@ public class WsRestClient {
    private ResponseEntity<ClassroomOccupancy[]> tryRequest(URI uri) {
       try {
 //         ResponseEntity<ClassroomOccupancy[]> response = restTemplate.exchange(uri, HttpMethod.GET, null, ClassroomOccupancy[].class);
+         ResponseEntity<ClassroomOccupancy[]> response = mockServiceCall();
 
-         ClassroomOccupancy[] array = new ClassroomOccupancy[22];
 
-         for (int i = 0; i < 22; i++) {
-            array[i] = new ClassroomOccupancy(randomLocalDateTime(), randomBoolean(), randomInt());
-         }
-
-         ResponseEntity<ClassroomOccupancy[]> response = new ResponseEntity<>(array, HttpStatus.OK);
 
          this.lastErrorMessage = null;
          return response;
@@ -117,6 +112,16 @@ public class WsRestClient {
          LOG.error(this.lastErrorMessage);
       }
       return null;
+   }
+
+   private ResponseEntity<ClassroomOccupancy[]> mockServiceCall() {
+      ClassroomOccupancy[] array = new ClassroomOccupancy[22];
+
+      for (int i = 0; i < 22; i++) {
+         array[i] = new ClassroomOccupancy(randomLocalDateTime(), randomBoolean(), randomInt());
+      }
+
+      return new ResponseEntity<>(array, HttpStatus.OK);
    }
 
    public LocalDateTime randomLocalDateTime() {
