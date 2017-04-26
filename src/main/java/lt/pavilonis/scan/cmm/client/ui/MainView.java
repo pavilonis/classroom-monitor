@@ -14,6 +14,7 @@ import lt.pavilonis.scan.cmm.client.representation.ClassroomOccupancy;
 import lt.pavilonis.scan.cmm.client.service.WsRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -27,34 +28,50 @@ public class MainView extends BorderPane {
 
    private final static Logger LOG = LoggerFactory.getLogger(MainView.class);
    private final static String FONT = "SansSerif";
+   private static final int COUNTER_STEP = 100;
    private final static int GRID_SIZE = 24;
    private final static int GRID_COLUMNS = 6;
    private final List<ClassroomNode> nodes = initEmptyNodes();
-
    private final WsRestClient wsClient;
+   private final int updateInterval;
+   private final Footer footer = new Footer();
+   private int millisecondCounter;
 
-   public MainView(WsRestClient wsClient) {
+   public MainView(WsRestClient wsClient, @Value("${api.request.interval}") int updateInterval) {
       this.wsClient = wsClient;
+      this.updateInterval = updateInterval;
 
       setCenter(createGrid(nodes));
-      setBottom(new Footer());
+      setBottom(footer);
    }
 
-   @Scheduled(fixedRate = 5_000)
+   @Scheduled(fixedRate = COUNTER_STEP)
    public void updateNodes() {
-      wsClient.load(response -> {
-         if (response.isPresent()) {
 
-            List<ClassroomOccupancy> items = Arrays.asList(response.get());
-            items.sort((i1, i2) -> Integer.compare(i1.getClassroomNumber(), i2.getClassroomNumber()));
+      millisecondCounter += COUNTER_STEP;
 
-            regularUpdate(items);
+      if (millisecondCounter == updateInterval) {
+         wsClient.load(response -> {
+            if (response.isPresent()) {
+
+               List<ClassroomOccupancy> items = Arrays.asList(response.get());
+               items.sort((i1, i2) -> Integer.compare(i1.getClassroomNumber(), i2.getClassroomNumber()));
+
+               regularUpdate(items);
 //            animatedUpdate(items);
 
-         } else {
-            App.displayWarning("No response from server!");
-         }
-      });
+            } else {
+               App.displayWarning("No response from server!");
+            }
+            millisecondCounter = 0;
+            footer.updateProgressValue(0);
+         });
+      } else {
+         double progress = millisecondCounter / (double) updateInterval;
+         footer.updateProgressValue(progress);
+      }
+
+
    }
 
    private void regularUpdate(List<ClassroomOccupancy> items) {

@@ -21,14 +21,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @Configuration
 @EnableScheduling
 @ComponentScan({"lt.pavilonis.scan", "resources"})
-//@PropertySource({"file:app.properties"})
+@PropertySource({"file:app.properties"})
 public class AppConfig {
 
-//   @Value(("${api.auth.username}"))
-//   private String apiUsername;
-//
-//   @Value(("${api.auth.password}"))
-//   private String apiPassword;
+   @Value("${api.auth.username}")
+   private String apiUsername;
+
+   @Value("${api.auth.password}")
+   private String apiPassword;
 
    @Bean
    public RestTemplate getRestTemplate() {
@@ -51,7 +51,7 @@ public class AppConfig {
 
    private ClientHttpRequestInterceptor authenticatingInterceptor() {
       return (request, body, execution) -> {
-         String creds = "";//apiUsername + ":" + apiPassword;
+         String creds = apiUsername + ":" + apiPassword;
          byte[] base64credsBytes = Base64.getEncoder().encode(creds.getBytes());
 
          HttpHeaders headers = request.getHeaders();
