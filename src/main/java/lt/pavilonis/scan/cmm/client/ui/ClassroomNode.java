@@ -3,6 +3,8 @@ package lt.pavilonis.scan.cmm.client.ui;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -12,8 +14,9 @@ public class ClassroomNode extends VBox {
    private final FadeTransition transition = new FadeTransition(Duration.millis(3_000), this);
 
    public ClassroomNode() {
+      setPadding(new Insets(7));
       transition.setInterpolator(EASE_IN);
-
+      setAlignment(Pos.CENTER);
    }
 
    private void fadeIn() {

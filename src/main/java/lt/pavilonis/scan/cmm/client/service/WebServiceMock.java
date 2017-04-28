@@ -25,7 +25,8 @@ class WebServiceMock {
       LocalDate start = LocalDate.of(1970, Month.JANUARY, 1);
       long days = ChronoUnit.DAYS.between(start, LocalDate.now());
       LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
-      return randomDate.atTime(LocalTime.now());
+      LocalTime randomTime = LocalTime.MIN.plusMinutes(RandomUtils.nextInt(480, 1250));
+      return randomDate.atTime(randomTime);
    }
 
    private boolean randomBoolean() {
