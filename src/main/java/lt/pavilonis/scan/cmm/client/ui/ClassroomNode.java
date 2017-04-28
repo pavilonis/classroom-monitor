@@ -13,6 +13,7 @@ public class ClassroomNode extends VBox {
 
    public ClassroomNode() {
       transition.setInterpolator(EASE_IN);
+
    }
 
    private void fadeIn() {

@@ -6,7 +6,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import lt.pavilonis.scan.cmm.client.service.WsRestClient;
+import lt.pavilonis.scan.cmm.client.service.WebServiceClient;
 import lt.pavilonis.scan.cmm.client.ui.MainView;
 import lt.pavilonis.scan.cmm.client.ui.WarningBox;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ public class App extends Application {
    private final static Logger LOG = LoggerFactory.getLogger(App.class);
    private static final StackPane ROOT_PANE = new StackPane();
    private static final WarningBox WARNING_BOX = new WarningBox(ROOT_PANE.getChildren());
-   private static WsRestClient wsClient;
+   private static WebServiceClient wsClient;
 
    static void start() {
       launch();
@@ -30,7 +30,7 @@ public class App extends Application {
       try {
 
          AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-         wsClient = context.getBean(WsRestClient.class);
+         wsClient = context.getBean(WebServiceClient.class);
 
          MainView mainView = context.getBean(MainView.class);
          ROOT_PANE.getChildren().add(mainView);

@@ -13,15 +13,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Locale;
 
-import static java.util.Collections.singletonList;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Configuration
 @EnableScheduling
 @ComponentScan({"lt.pavilonis.scan", "resources"})
-@PropertySource({"file:app.properties"})
+@PropertySource({"file:${propertiesLocation:app.properties}"})
 public class AppConfig {
 
    @Value("${api.auth.username}")
@@ -33,8 +33,8 @@ public class AppConfig {
    @Bean
    public RestTemplate getRestTemplate() {
       RestTemplate rest = new RestTemplate();
-      rest.setInterceptors(singletonList(authenticatingInterceptor()));
-      rest.setMessageConverters(singletonList(new MappingJackson2HttpMessageConverter()));
+      rest.setInterceptors(Collections.singletonList(authenticatingInterceptor()));
+      rest.setMessageConverters(Collections.singletonList(new MappingJackson2HttpMessageConverter()));
       return rest;
    }
 
@@ -56,7 +56,7 @@ public class AppConfig {
 
          HttpHeaders headers = request.getHeaders();
          headers.add("Authorization", "Basic " + new String(base64credsBytes));
-         headers.setAccept(singletonList(APPLICATION_JSON));
+         headers.setAccept(Collections.singletonList(APPLICATION_JSON));
          return execution.execute(request, body);
       };
    }

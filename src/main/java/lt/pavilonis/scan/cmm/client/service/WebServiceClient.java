@@ -4,10 +4,10 @@ import javafx.application.Platform;
 import lt.pavilonis.scan.cmm.client.App;
 import lt.pavilonis.scan.cmm.client.representation.ClassroomOccupancy;
 import lt.pavilonis.util.TimeUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,29 +18,24 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
-public class WsRestClient {
-   private static final Logger LOG = getLogger(WsRestClient.class.getSimpleName());
+public class WebServiceClient {
+   private static final Logger LOG = getLogger(WebServiceClient.class.getSimpleName());
    private static final String SEGMENT_CLASSROOMS = "classrooms";
 
    @Value(("${api.uri.base}"))
    private String baseUri;
 
-   @Value(("${scanner.id}"))
-   private String scannerId;
+   @Value(("${api.mock:false}"))
+   private boolean webServiceMock;
 
    @Autowired
    private RestTemplate restTemplate;
@@ -74,18 +69,29 @@ public class WsRestClient {
       new BackgroundTask<>(() -> {
          LocalDateTime opStart = LocalDateTime.now();
          ResponseEntity<ClassroomOccupancy[]> exchange = tryRequest(uri);
-         LOG.info("Request completed [duration={}]", TimeUtils.duration(opStart));
+         Optional<ClassroomOccupancy[]> result =
+               Optional.ofNullable(exchange == null ? null : exchange.getBody());
+
+         if (result.isPresent()) {
+            LOG.info("Request completed [duration={}, entries={}]",
+                  TimeUtils.duration(opStart), result.get().length);
+         } else {
+            LOG.error("Request failed [duration={}, message={}]",
+                  TimeUtils.duration(opStart), lastErrorMessage);
+         }
          App.clearWarning();
-         Platform.runLater(() -> consumer.accept(Optional.ofNullable(exchange == null ? null : exchange.getBody())));
+         Platform.runLater(() -> consumer.accept(result));
       });
    }
 
    private ResponseEntity<ClassroomOccupancy[]> tryRequest(URI uri) {
       try {
-//         ResponseEntity<ClassroomOccupancy[]> response = restTemplate.exchange(uri, HttpMethod.GET, null, ClassroomOccupancy[].class);
-         ResponseEntity<ClassroomOccupancy[]> response = mockServiceCall();
 
+         ResponseEntity<ClassroomOccupancy[]> response = webServiceMock
 
+               ? new ResponseEntity<>(new WebServiceMock().load(), HttpStatus.OK)
+
+               : restTemplate.exchange(uri, HttpMethod.GET, null, ClassroomOccupancy[].class);
 
          this.lastErrorMessage = null;
          return response;
@@ -93,10 +99,10 @@ public class WsRestClient {
 
          switch (httpErr.getStatusCode()) {
             case NOT_FOUND:
-               this.lastErrorMessage = "resourceNotFound";
+               this.lastErrorMessage = "Resource not found";
                break;
             case CONFLICT:
-               this.lastErrorMessage = "requestConflict";
+               this.lastErrorMessage = "Request conflict";
                break;
             default:
                this.lastErrorMessage = httpErr.getMessage();
@@ -112,30 +118,5 @@ public class WsRestClient {
          LOG.error(this.lastErrorMessage);
       }
       return null;
-   }
-
-   private ResponseEntity<ClassroomOccupancy[]> mockServiceCall() {
-      ClassroomOccupancy[] array = new ClassroomOccupancy[22];
-
-      for (int i = 0; i < 22; i++) {
-         array[i] = new ClassroomOccupancy(randomLocalDateTime(), randomBoolean(), randomInt());
-      }
-
-      return new ResponseEntity<>(array, HttpStatus.OK);
-   }
-
-   public LocalDateTime randomLocalDateTime() {
-      LocalDate start = LocalDate.of(1970, Month.JANUARY, 1);
-      long days = ChronoUnit.DAYS.between(start, LocalDate.now());
-      LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
-      return randomDate.atTime(LocalTime.now());
-   }
-
-   public boolean randomBoolean() {
-      return RandomUtils.nextInt(1, 3) == 1;
-   }
-
-   public int randomInt() {
-      return RandomUtils.nextInt(100, 200);
    }
 }

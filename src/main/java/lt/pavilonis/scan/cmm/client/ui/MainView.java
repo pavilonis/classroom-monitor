@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lt.pavilonis.scan.cmm.client.App;
 import lt.pavilonis.scan.cmm.client.representation.ClassroomOccupancy;
-import lt.pavilonis.scan.cmm.client.service.WsRestClient;
+import lt.pavilonis.scan.cmm.client.service.WebServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,17 +27,26 @@ import java.util.Optional;
 public class MainView extends BorderPane {
 
    private final static Logger LOG = LoggerFactory.getLogger(MainView.class);
+   private final static String STYLE_BASE = "-fx-border-color: black; -fx-border-width:4px;" +
+         " -fx-border-radius: 30px; -fx-background-radius: 30px; ";
    private final static String FONT = "SansSerif";
-   private static final int COUNTER_STEP = 100;
+   private final static int INTERVAL_MIN = 1000;
+   private final static int COUNTER_STEP = 50;
    private final static int GRID_SIZE = 24;
    private final static int GRID_COLUMNS = 6;
    private final List<ClassroomNode> nodes = initEmptyNodes();
-   private final WsRestClient wsClient;
+   private final WebServiceClient wsClient;
    private final int updateInterval;
    private final Footer footer = new Footer();
-   private int millisecondCounter;
+   private int counter;
+   private boolean busy;
 
-   public MainView(WsRestClient wsClient, @Value("${api.request.interval}") int updateInterval) {
+   public MainView(WebServiceClient wsClient, @Value("${api.request.interval}") int updateInterval) {
+
+      if (updateInterval < INTERVAL_MIN) {
+         LOG.error("Update interval is too small. Should be more than {}", INTERVAL_MIN);
+         throw new IllegalArgumentException("Update interval is too small");
+      }
       this.wsClient = wsClient;
       this.updateInterval = updateInterval;
 
@@ -48,30 +57,41 @@ public class MainView extends BorderPane {
    @Scheduled(fixedRate = COUNTER_STEP)
    public void updateNodes() {
 
-      millisecondCounter += COUNTER_STEP;
-
-      if (millisecondCounter == updateInterval) {
-         wsClient.load(response -> {
-            if (response.isPresent()) {
-
-               List<ClassroomOccupancy> items = Arrays.asList(response.get());
-               items.sort((i1, i2) -> Integer.compare(i1.getClassroomNumber(), i2.getClassroomNumber()));
-
-               regularUpdate(items);
-//            animatedUpdate(items);
-
-            } else {
-               App.displayWarning("No response from server!");
-            }
-            millisecondCounter = 0;
-            footer.updateProgressValue(0);
-         });
-      } else {
-         double progress = millisecondCounter / (double) updateInterval;
-         footer.updateProgressValue(progress);
+      if (busy) {
+         LOG.warn("Skipping update: busy");
+         return;
       }
 
+      counter += COUNTER_STEP;
 
+      if (counter <= updateInterval + COUNTER_STEP * 2 && counter >= updateInterval - COUNTER_STEP * 2) {
+
+         performUpdate();
+
+      } else {
+         double progress = counter / (double) updateInterval;
+         footer.updateProgressValue(progress);
+      }
+   }
+
+   private void performUpdate() {
+      busy = true;
+      wsClient.load(response -> {
+         if (response.isPresent()) {
+
+            List<ClassroomOccupancy> items = Arrays.asList(response.get());
+            items.sort((i1, i2) -> Integer.compare(i1.getClassroomNumber(), i2.getClassroomNumber()));
+
+            regularUpdate(items);
+//            animatedUpdate(items);
+
+         } else {
+            App.displayWarning("No response from server!");
+         }
+         counter = 0;
+         footer.updateProgressValue(0);
+         busy = false;
+      });
    }
 
    private void regularUpdate(List<ClassroomOccupancy> items) {
@@ -110,11 +130,14 @@ public class MainView extends BorderPane {
       node.getChildren().clear();
 
       if (item.isPresent()) {
-         node.setStyle(item.get().isOccupied() ? "-fx-background-color: red" : "-fx-background-color: green");
+         node.setStyle(item.get().isOccupied()
+                     ? STYLE_BASE + "-fx-background-color: rgba(255, 0, 0, .66)"
+                     : STYLE_BASE + "-fx-background-color: rgba(0, 255, 0, 0.66)"
+         );
          node.getChildren().add(createLabel(item.get()));
 
       } else {
-         node.setStyle("-fx-background-color: white");
+         node.setStyle("-fx-background-color: #fafafa");
       }
    }
 
@@ -128,10 +151,10 @@ public class MainView extends BorderPane {
 
    private Node createGrid(List<? extends Node> nodes) {
       GridPane grid = new GridPane();
-      grid.setHgap(40);
-      grid.setVgap(106);
-      grid.setGridLinesVisible(true);
-      grid.setPadding(new Insets(30));
+      grid.setHgap(38);
+      grid.setVgap(94);
+//      grid.setGridLinesVisible(true);
+      grid.setPadding(new Insets(20, 5, 5, 20));
 
       for (int i = 0; i < GRID_SIZE; i++) {
          int row = i / GRID_COLUMNS;
