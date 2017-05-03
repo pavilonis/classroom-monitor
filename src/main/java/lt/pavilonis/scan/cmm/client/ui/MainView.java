@@ -30,20 +30,19 @@ import java.util.Optional;
 @Component
 public class MainView extends BorderPane {
 
+   final static String FONT = "SansSerif";
+   final static int FONT_SIZE_SMALL = 56;
+   final static int FONT_SIZE_BIG = 94;
    private final static Logger LOG = LoggerFactory.getLogger(MainView.class);
    private final static DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
    private final static String STYLE_BASE = "-fx-border-color: black; -fx-border-width:4px;" +
          " -fx-border-radius: 30px; -fx-background-radius: 30px; ";
    private final static String STYLE_RED = "-fx-background-color: rgba(255, 0, 0, .66)";
    private final static String STYLE_GREEN = "-fx-background-color: rgba(0, 255, 0, .66)";
-   private final static String FONT = "SansSerif";
    private final static int INTERVAL_MIN = 1000;
    private final static int COUNTER_STEP = 50;
    private final static int GRID_SIZE = 24;
    private final static int GRID_COLUMNS = 8;
-   private final static int FONT_SIZE_TIME = 50;
-   private final static int FONT_SIZE_STATE = 50;
-   private final static int FONT_SIZE_NUMBER = 94;
    private final List<ClassroomNode> nodes = initEmptyNodes();
    private final WebServiceClient wsClient;
    private final int updateInterval;
@@ -53,8 +52,10 @@ public class MainView extends BorderPane {
    private boolean busy;
 
    public MainView(WebServiceClient wsClient,
-                   @Value("${api.request.interval}") int updateInterval,
-                   MessageSourceAdapter messages) {
+                   @Value("${api.request.interval}")
+                   int updateInterval,
+                   MessageSourceAdapter messages,
+                   Header header) {
 
       if (updateInterval < INTERVAL_MIN) {
          LOG.error("Update interval is too small. Should be more than {}", INTERVAL_MIN);
@@ -65,7 +66,9 @@ public class MainView extends BorderPane {
       this.updateInterval = updateInterval;
 
       setCenter(createGrid(nodes));
-      setPadding(new Insets(100, 100, 100, 100));
+      setPadding(new Insets(36, 20, 20, 20));
+
+      setTop(header);
       setBottom(footer);
    }
 
@@ -147,7 +150,7 @@ public class MainView extends BorderPane {
 
       if (item.isPresent()) {
          ClassroomOccupancy classroom = item.get();
-         Node labelClassroomNumber = createLabel(String.valueOf(classroom.getClassroomNumber()), FONT_SIZE_NUMBER);
+         Node labelClassroomNumber = createLabel(String.valueOf(classroom.getClassroomNumber()), FONT_SIZE_BIG);
 
          if (classroom.isOccupied()) {
             boxNode.setStyle(STYLE_BASE + STYLE_RED);
@@ -155,16 +158,16 @@ public class MainView extends BorderPane {
             LocalDateTime occupancyPeriodStart = classroom.getDateTime();
             String time = TIME_FORMAT.format(occupancyPeriodStart);
 
-            Node labelTime = createLabel(time, FONT_SIZE_TIME);
-            Node labelState = createLabel(messages.get(this, "occupied"), FONT_SIZE_STATE);
+            Node labelTime = createLabel(time, FONT_SIZE_SMALL);
+            Node labelState = createLabel(messages.get(this, "occupied"), FONT_SIZE_SMALL);
 
             contents.addAll(labelTime, labelClassroomNumber, labelState);
 
          } else {
             boxNode.setStyle(STYLE_BASE + STYLE_GREEN);
 
-            Node labelState = createLabel(messages.get(this, "free"), FONT_SIZE_STATE);
-            contents.addAll(createLabel("", FONT_SIZE_TIME), labelClassroomNumber, labelState);
+            Node labelState = createLabel(messages.get(this, "free"), FONT_SIZE_SMALL);
+            contents.addAll(createLabel("", FONT_SIZE_SMALL), labelClassroomNumber, labelState);
          }
 
       } else {
@@ -182,8 +185,8 @@ public class MainView extends BorderPane {
 
    private Node createGrid(List<? extends Node> nodes) {
       GridPane grid = new GridPane();
-      grid.setHgap(14);
-      grid.setVgap(30);
+      grid.setHgap(18);
+      grid.setVgap(18);
 //      grid.setGridLinesVisible(true);
 //      grid.setPadding(new Insets(20, 20, 20, 20));
 
@@ -197,7 +200,7 @@ public class MainView extends BorderPane {
       return grid;
    }
 
-   private Node createLabel(String text, int size) {
+   static Node createLabel(String text, int size) {
       Text textNode = new Text(text);
       textNode.setFont(Font.font(FONT, FontWeight.NORMAL, size));
       return textNode;

@@ -21,7 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @Configuration
 @EnableScheduling
 @ComponentScan({"lt.pavilonis.scan", "resources"})
-@PropertySource({"file:${propertiesLocation:app.properties}"})
+@PropertySource(value = {"file:${propertiesLocation:app.properties}"}, encoding = "UTF-8")
 public class AppConfig {
 
    @Value("${api.auth.username}")

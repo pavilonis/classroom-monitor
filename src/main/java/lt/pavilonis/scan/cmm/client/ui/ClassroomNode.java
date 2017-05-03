@@ -12,9 +12,12 @@ import static javafx.animation.Interpolator.EASE_IN;
 
 public class ClassroomNode extends VBox {
    private final FadeTransition transition = new FadeTransition(Duration.millis(3_000), this);
+   private static final int WIDTH = 220;
 
    public ClassroomNode() {
       setPadding(new Insets(7));
+      setMinWidth(WIDTH);
+      setMaxWidth(WIDTH);
       transition.setInterpolator(EASE_IN);
       setAlignment(Pos.CENTER);
    }
