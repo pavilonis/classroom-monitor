@@ -1,6 +1,7 @@
 package lt.pavilonis.scan.cmm.client.service;
 
 import lt.pavilonis.scan.cmm.client.representation.ClassroomOccupancy;
+import lt.pavilonis.scan.cmm.client.ui.MainView;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.time.LocalDate;
@@ -8,17 +9,22 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 class WebServiceMock {
 
    ClassroomOccupancy[] load() {
-      ClassroomOccupancy[] result = new ClassroomOccupancy[22];
 
-      for (int i = 0; i < 22; i++) {
-         result[i] = new ClassroomOccupancy(randomLocalDateTime(), randomBoolean(), randomInt());
+      Set<Integer> classNumbers = new HashSet<>(MainView.GRID_SIZE);
+      while (classNumbers.size() < MainView.GRID_SIZE) {
+         classNumbers.add(randomInt());
       }
-      return result;
+
+      return classNumbers.stream()
+            .map(number -> new ClassroomOccupancy(randomLocalDateTime(), randomBoolean(), number))
+            .toArray(ClassroomOccupancy[]::new);
    }
 
    private LocalDateTime randomLocalDateTime() {

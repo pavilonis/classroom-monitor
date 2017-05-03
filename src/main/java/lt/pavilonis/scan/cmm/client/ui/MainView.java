@@ -41,7 +41,7 @@ public class MainView extends BorderPane {
    private final static String STYLE_GREEN = "-fx-background-color: rgba(0, 255, 0, .66)";
    private final static int INTERVAL_MIN = 1000;
    private final static int COUNTER_STEP = 50;
-   private final static int GRID_SIZE = 24;
+   public final static int GRID_SIZE = 24;
    private final static int GRID_COLUMNS = 8;
    private final List<ClassroomNode> nodes = initEmptyNodes();
    private final WebServiceClient wsClient;
