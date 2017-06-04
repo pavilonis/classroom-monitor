@@ -9,7 +9,7 @@
    <properties>
       <maven.compiler.source>1.8</maven.compiler.source>
       <maven.compiler.target>1.8</maven.compiler.target>
-      <jackson.version>2.8.3</jackson.version>
+      <jackson.version>2.8.8</jackson.version>
    </properties>
    <dependencies>
 
@@ -45,7 +45,7 @@
       <dependency>
          <groupId>lt.pavilonis</groupId>
          <artifactId>utils</artifactId>
-         <version>0.11</version>
+         <version>0.13</version>
       </dependency>
 
       <!-- LOGGING -->
@@ -83,7 +83,7 @@
                <archive>
                   <manifest>
                      <addClasspath>true</addClasspath>
-                     <mainClass>lt.pavilonis.scan.cmm.client.Main</mainClass>
+                     <mainClass>lt.pavilonis.scan.cmm.client.App</mainClass>
                   </manifest>
                </archive>
             </configuration>

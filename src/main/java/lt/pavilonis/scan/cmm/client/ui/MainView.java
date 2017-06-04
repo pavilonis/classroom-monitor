@@ -98,6 +98,7 @@ public class MainView extends BorderPane {
          if (response.isPresent()) {
 
             List<ClassroomOccupancy> items = Arrays.asList(response.get());
+
             items.sort((i1, i2) -> Integer.compare(i1.getClassroomNumber(), i2.getClassroomNumber()));
 
             regularUpdate(items);
@@ -117,7 +118,9 @@ public class MainView extends BorderPane {
 
          ClassroomNode node = nodes.get(i);
 
-         Optional<ClassroomOccupancy> item = i < items.size() ? Optional.of(items.get(i)) : Optional.empty();
+         Optional<ClassroomOccupancy> item = i < items.size()
+               ? Optional.of(items.get(i))
+               : Optional.empty();
 
          updateNode(node, item);
       }

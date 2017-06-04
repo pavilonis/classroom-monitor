@@ -11,16 +11,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -29,10 +24,9 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Service
 public class WebServiceClient {
    private static final Logger LOG = getLogger(WebServiceClient.class.getSimpleName());
-   private static final String SEGMENT_CLASSROOMS = "classrooms";
 
-   @Value(("${api.uri.base}"))
-   private String baseUri;
+   @Value(("${api.uri}"))
+   private String uri;
 
    @Value(("${api.mock:false}"))
    private boolean webServiceMock;
@@ -43,32 +37,14 @@ public class WebServiceClient {
    private String lastErrorMessage;
 
    public void load(Consumer<Optional<ClassroomOccupancy[]>> consumer) {
-      request(uri(SEGMENT_CLASSROOMS), consumer);
+      request(uri, consumer);
    }
 
-   public Optional<String> getLastErrorMessage() {
-      return Optional.ofNullable(lastErrorMessage);
-   }
-
-   private URI uri(String... segments) {
-      return uri(Collections.emptyMap(), segments);
-   }
-
-   private URI uri(Map<String, String> params, String... segments) {
-      LinkedMultiValueMap<String, String> paramMultiMap = new LinkedMultiValueMap<>();
-      params.forEach(paramMultiMap::add);
-
-      return UriComponentsBuilder.fromUriString(baseUri)
-            .pathSegment(segments)
-            .queryParams(paramMultiMap)
-            .build()
-            .toUri();
-   }
-
-   public void request(URI uri, Consumer<Optional<ClassroomOccupancy[]>> consumer) {
+   private void request(String url, Consumer<Optional<ClassroomOccupancy[]>> consumer) {
       new BackgroundTask<>(() -> {
          LocalDateTime opStart = LocalDateTime.now();
-         ResponseEntity<ClassroomOccupancy[]> exchange = tryRequest(uri);
+         ResponseEntity<ClassroomOccupancy[]> exchange = tryRequest(url);
+
          Optional<ClassroomOccupancy[]> result =
                Optional.ofNullable(exchange == null ? null : exchange.getBody());
 
@@ -84,14 +60,14 @@ public class WebServiceClient {
       });
    }
 
-   private ResponseEntity<ClassroomOccupancy[]> tryRequest(URI uri) {
+   private ResponseEntity<ClassroomOccupancy[]> tryRequest(String url) {
       try {
 
          ResponseEntity<ClassroomOccupancy[]> response = webServiceMock
 
                ? new ResponseEntity<>(new WebServiceMock().load(), HttpStatus.OK)
 
-               : restTemplate.exchange(uri, HttpMethod.GET, null, ClassroomOccupancy[].class);
+               : restTemplate.exchange(url, HttpMethod.GET, null, ClassroomOccupancy[].class);
 
          this.lastErrorMessage = null;
          return response;
@@ -118,5 +94,9 @@ public class WebServiceClient {
          LOG.error(this.lastErrorMessage);
       }
       return null;
+   }
+
+   public Optional<String> getLastErrorMessage() {
+      return Optional.ofNullable(lastErrorMessage);
    }
 }

@@ -21,7 +21,7 @@ public class App extends Application {
    private static final WarningBox WARNING_BOX = new WarningBox(ROOT_PANE.getChildren());
    private static WebServiceClient wsClient;
 
-   static void start() {
+   public static void main(String[] args) {
       launch();
    }
 
