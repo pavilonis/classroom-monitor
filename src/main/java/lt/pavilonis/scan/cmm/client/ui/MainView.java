@@ -48,6 +48,8 @@ public class MainView extends BorderPane {
    private final int updateInterval;
    private final Footer footer = new Footer();
    private final MessageSourceAdapter messages;
+   private final int offsetPositive;
+   private final int offsetNegative;
    private int counter;
    private boolean busy;
 
@@ -64,6 +66,8 @@ public class MainView extends BorderPane {
       this.wsClient = wsClient;
       this.messages = messages;
       this.updateInterval = updateInterval;
+      this.offsetPositive = updateInterval + COUNTER_STEP * 2;
+      this.offsetNegative = updateInterval - COUNTER_STEP * 2;
 
       setCenter(createGrid(nodes));
       setPadding(new Insets(36, 20, 20, 20));
@@ -73,16 +77,16 @@ public class MainView extends BorderPane {
    }
 
    @Scheduled(fixedRate = COUNTER_STEP)
-   public void updateNodes() {
+   public void count() {
 
       if (busy) {
-         LOG.warn("Skipping update: busy");
+         LOG.debug("Skipping update: busy");
          return;
       }
 
       counter += COUNTER_STEP;
 
-      if (counter <= updateInterval + COUNTER_STEP * 2 && counter >= updateInterval - COUNTER_STEP * 2) {
+      if (counter > offsetNegative && counter < offsetPositive) {
 
          performUpdate();
 
