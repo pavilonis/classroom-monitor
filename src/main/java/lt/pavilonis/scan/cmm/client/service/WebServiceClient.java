@@ -29,7 +29,7 @@ public class WebServiceClient {
    private String uri;
 
    @Value(("${api.mock:false}"))
-   private boolean webServiceMock;
+   private boolean isMockWebService;
 
    @Autowired
    private RestTemplate restTemplate;
@@ -63,7 +63,9 @@ public class WebServiceClient {
    private ResponseEntity<ClassroomOccupancy[]> tryRequest(String url) {
       try {
 
-         ResponseEntity<ClassroomOccupancy[]> response = webServiceMock
+         LOG.info("Making request [url={}, isMock={}]", url, isMockWebService);
+
+         ResponseEntity<ClassroomOccupancy[]> response = isMockWebService
 
                ? new ResponseEntity<>(new WebServiceMock().load(), HttpStatus.OK)
 
