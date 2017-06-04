@@ -41,7 +41,7 @@ public class MainView extends BorderPane {
    private final static String STYLE_GREEN = "-fx-background-color: rgba(0, 255, 0, .66)";
    private final static int INTERVAL_MIN = 1000;
    private final static int COUNTER_STEP = 50;
-   private final static int GRID_SIZE = 24;
+   public final static int GRID_SIZE = 24;
    private final static int GRID_COLUMNS = 8;
    private final List<ClassroomNode> nodes = initEmptyNodes();
    private final WebServiceClient wsClient;
@@ -98,6 +98,7 @@ public class MainView extends BorderPane {
          if (response.isPresent()) {
 
             List<ClassroomOccupancy> items = Arrays.asList(response.get());
+
             items.sort((i1, i2) -> Integer.compare(i1.getClassroomNumber(), i2.getClassroomNumber()));
 
             regularUpdate(items);
@@ -117,7 +118,9 @@ public class MainView extends BorderPane {
 
          ClassroomNode node = nodes.get(i);
 
-         Optional<ClassroomOccupancy> item = i < items.size() ? Optional.of(items.get(i)) : Optional.empty();
+         Optional<ClassroomOccupancy> item = i < items.size()
+               ? Optional.of(items.get(i))
+               : Optional.empty();
 
          updateNode(node, item);
       }
