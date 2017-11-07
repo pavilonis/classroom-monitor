@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -28,6 +30,9 @@ public class WebServiceClient {
    @Value(("${api.uri}"))
    private String uri;
 
+   @Value(("${api.level}"))
+   private int level;
+
    @Value(("${api.mock:false}"))
    private boolean isMockWebService;
 
@@ -36,6 +41,7 @@ public class WebServiceClient {
 
    private String lastErrorMessage;
 
+   // Sometimes gets marked as unused
    public void load(Consumer<Optional<ClassroomOccupancy[]>> consumer) {
       request(uri, consumer);
    }
@@ -63,13 +69,22 @@ public class WebServiceClient {
    private ResponseEntity<ClassroomOccupancy[]> tryRequest(String url) {
       try {
 
-         LOG.info("Making request [url={}, isMock={}]", url, isMockWebService);
+         ResponseEntity<ClassroomOccupancy[]> response;
 
-         ResponseEntity<ClassroomOccupancy[]> response = isMockWebService
+         if (isMockWebService) {
+            LOG.info("Making mock request");
+            response = new ResponseEntity<>(new WebServiceMock().load(), HttpStatus.OK);
 
-               ? new ResponseEntity<>(new WebServiceMock().load(), HttpStatus.OK)
+         } else {
 
-               : restTemplate.exchange(url, HttpMethod.GET, null, ClassroomOccupancy[].class);
+            URI uri = UriComponentsBuilder.fromUriString(url)
+                  .queryParam("level", level)
+                  .build()
+                  .toUri();
+
+            LOG.info("Making request [uri={}]", uri.toString());
+            response = restTemplate.exchange(uri, HttpMethod.GET, null, ClassroomOccupancy[].class);
+         }
 
          this.lastErrorMessage = null;
          return response;
