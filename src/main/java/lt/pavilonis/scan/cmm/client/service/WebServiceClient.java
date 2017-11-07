@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import lt.pavilonis.scan.cmm.client.App;
 import lt.pavilonis.scan.cmm.client.representation.ClassroomOccupancy;
 import lt.pavilonis.util.TimeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,13 +28,13 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class WebServiceClient {
    private static final Logger LOG = getLogger(WebServiceClient.class.getSimpleName());
 
-   @Value(("${api.uri}"))
+   @Value("${api.uri}")
    private String uri;
 
-   @Value(("${api.level}"))
-   private int level;
+   @Value("${api.levels}")
+   private String levels;
 
-   @Value(("${api.mock:false}"))
+   @Value("${api.mock:false}")
    private boolean isMockWebService;
 
    @Autowired
@@ -77,8 +78,10 @@ public class WebServiceClient {
 
          } else {
 
+            String[] levelsParam = StringUtils.split(levels, ',');
+
             URI uri = UriComponentsBuilder.fromUriString(url)
-                  .queryParam("level", level)
+                  .queryParam("levels", levelsParam)
                   .build()
                   .toUri();
 
