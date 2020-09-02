@@ -1,6 +1,5 @@
 package lt.pavilonis.scan.cmm.client.service;
 
-import lt.pavilonis.scan.cmm.client.representation.ClassroomOccupancy;
 import lt.pavilonis.scan.cmm.client.ui.MainView;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -17,12 +16,12 @@ class WebServiceMock {
 
    ClassroomOccupancy[] load() {
 
-      Set<Integer> classNumbers = new HashSet<>(MainView.GRID_SIZE);
-      while (classNumbers.size() < MainView.GRID_SIZE) {
-         classNumbers.add(randomInt());
+      Set<Integer> classroomNames = new HashSet<>(MainView.GRID_SIZE);
+      while (classroomNames.size() < MainView.GRID_SIZE) {
+         classroomNames.add(randomInt());
       }
 
-      return classNumbers.stream()
+      return classroomNames.stream()
             .map(number -> new ClassroomOccupancy(randomLocalDateTime(), randomBoolean(), number))
             .toArray(ClassroomOccupancy[]::new);
    }

@@ -10,11 +10,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class Header extends HBox {
 
-   public Header(@Value("${header.text}") String title) {
+   public Header(@Value("${header.text}") String title,
+                 @Value("${font.size.title:94}") int fontSizeTitle) {
+
       setAlignment(Pos.CENTER);
       setPadding(new Insets(0, 0, 36, 0));
 
-      Node textNode = MainView.createLabel(title, MainView.FONT_SIZE_BIG);
+      Node textNode = MainView.createLabel(title, fontSizeTitle);
       getChildren().add(textNode);
    }
 }

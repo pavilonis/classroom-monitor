@@ -11,13 +11,12 @@ import java.util.ResourceBundle;
 final class Footer extends HBox {
 
    private final ProgressBar progressBar = new ProgressBar(0);
-   private static final String PROPERTY_VERSION = ResourceBundle
-         .getBundle("application")
-         .getString("application.version");
 
    Footer() {
+      String version = ResourceBundle.getBundle("application")
+            .getString("application.version");
 
-      Label versionLabel = new Label(" v. " + PROPERTY_VERSION);
+      Label versionLabel = new Label(" v. " + version);
 
       setSpacing(10);
 
@@ -27,7 +26,6 @@ final class Footer extends HBox {
       getChildren().addAll(versionLabel, progressBar);
 
       setAlignment(Pos.CENTER_LEFT);
-//      setStyle("-fx-border-color: black");
    }
 
    void updateProgressValue(double progress) {

@@ -16,7 +16,7 @@ public class BackgroundTask<T> extends Service<T> {
    protected Task<T> createTask() {
       return new Task<T>() {
          @Override
-         protected T call() throws Exception {
+         protected T call() {
             action.run();
             return null;
          }

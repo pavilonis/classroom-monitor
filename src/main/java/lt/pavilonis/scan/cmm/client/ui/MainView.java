@@ -1,6 +1,5 @@
 package lt.pavilonis.scan.cmm.client.ui;
 
-import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -9,9 +8,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import lt.pavilonis.scan.cmm.client.App;
-import lt.pavilonis.scan.cmm.client.representation.ClassroomOccupancy;
+import lt.pavilonis.scan.cmm.client.service.ClassroomOccupancy;
 import lt.pavilonis.scan.cmm.client.service.MessageSourceAdapter;
 import lt.pavilonis.scan.cmm.client.service.WebServiceClient;
 import org.slf4j.Logger;
@@ -24,25 +22,25 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 public class MainView extends BorderPane {
 
-   final static String FONT = "SansSerif";
-   final static int FONT_SIZE_SMALL = 56;
-   final static int FONT_SIZE_BIG = 94;
-   private final static Logger LOG = LoggerFactory.getLogger(MainView.class);
-   private final static DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
-   private final static String STYLE_BASE = "-fx-border-color: black; -fx-border-width:4px;" +
+   static final String FONT = "SansSerif";
+   static final int FONT_SIZE_SMALL = 56;
+   private static final Logger LOGGER = LoggerFactory.getLogger(MainView.class);
+   private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
+   private static final String STYLE_BASE = "-fx-border-color: black; -fx-border-width:4px;" +
          " -fx-border-radius: 30px; -fx-background-radius: 30px; ";
-   private final static String STYLE_RED = "-fx-background-color: rgba(255, 0, 0, .66)";
-   private final static String STYLE_GREEN = "-fx-background-color: rgba(0, 255, 0, .66)";
-   private final static int INTERVAL_MIN = 1000;
-   private final static int COUNTER_STEP = 50;
-   public final static int GRID_SIZE = 24;
-   private final static int GRID_COLUMNS = 8;
+   private static final String STYLE_RED = "-fx-background-color: rgba(255, 0, 0, .66)";
+   private static final String STYLE_GREEN = "-fx-background-color: rgba(0, 255, 0, .66)";
+   private static final int INTERVAL_MIN = 1000;
+   private static final int COUNTER_STEP = 50;
+   public static final int GRID_SIZE = 24;
+   private static final int GRID_COLUMNS = 8;
    private final List<ClassroomNode> nodes = initEmptyNodes();
    private final WebServiceClient wsClient;
    private final int updateInterval;
@@ -50,17 +48,18 @@ public class MainView extends BorderPane {
    private final MessageSourceAdapter messages;
    private final int offsetPositive;
    private final int offsetNegative;
+   private final int fontSizeTitle;
    private int counter;
    private boolean busy;
 
    public MainView(WebServiceClient wsClient,
-                   @Value("${api.request.interval}")
-                   int updateInterval,
+                   @Value("${api.request.interval:5000}") int updateInterval,
+                   @Value("${font.size.title:94}") int fontSizeTitle,
                    MessageSourceAdapter messages,
                    Header header) {
 
       if (updateInterval < INTERVAL_MIN) {
-         LOG.error("Update interval is too small. Should be more than {}", INTERVAL_MIN);
+         LOGGER.error("Update interval is too small. Should be more than {}", INTERVAL_MIN);
          throw new IllegalArgumentException("Update interval is too small");
       }
       this.wsClient = wsClient;
@@ -68,6 +67,7 @@ public class MainView extends BorderPane {
       this.updateInterval = updateInterval;
       this.offsetPositive = updateInterval + COUNTER_STEP * 2;
       this.offsetNegative = updateInterval - COUNTER_STEP * 2;
+      this.fontSizeTitle = fontSizeTitle;
 
       setCenter(createGrid(nodes));
       setPadding(new Insets(36, 20, 20, 20));
@@ -80,7 +80,7 @@ public class MainView extends BorderPane {
    public void count() {
 
       if (busy) {
-         LOG.debug("Skipping update: busy");
+         LOGGER.debug("Skipping update: busy");
          return;
       }
 
@@ -100,13 +100,9 @@ public class MainView extends BorderPane {
       busy = true;
       wsClient.load(response -> {
          if (response.isPresent()) {
-
             List<ClassroomOccupancy> items = Arrays.asList(response.get());
-
-            items.sort((i1, i2) -> Integer.compare(i1.getClassroomNumber(), i2.getClassroomNumber()));
-
+            items.sort(Comparator.comparingInt(ClassroomOccupancy::getClassroomNumber));
             regularUpdate(items);
-//            animatedUpdate(items);
 
          } else {
             App.displayWarning("No response from server!");
@@ -130,34 +126,13 @@ public class MainView extends BorderPane {
       }
    }
 
-   private void animatedUpdate(List<ClassroomOccupancy> items) {
-      FadeTransition transition = new FadeTransition(Duration.seconds(2), this);
-      transition.setFromValue(1);
-      transition.setToValue(0);
-      transition.setOnFinished(event -> {
-         for (int i = 0; i < GRID_SIZE; i++) {
-
-            ClassroomNode node = nodes.get(i);
-
-            Optional<ClassroomOccupancy> item = i < items.size() ? Optional.of(items.get(i)) : Optional.empty();
-
-            updateNode(node, item);
-         }
-         transition.setFromValue(0);
-         transition.setToValue(1);
-         transition.setOnFinished(null);
-         transition.play();
-      });
-      transition.play();
-   }
-
    private void updateNode(ClassroomNode boxNode, Optional<ClassroomOccupancy> item) {
       ObservableList<Node> contents = boxNode.getChildren();
       contents.clear();
 
       if (item.isPresent()) {
          ClassroomOccupancy classroom = item.get();
-         Node labelClassroomNumber = createLabel(String.valueOf(classroom.getClassroomNumber()), FONT_SIZE_BIG);
+         Node labelClassroomNumber = createLabel(String.valueOf(classroom.getClassroomNumber()), fontSizeTitle);
 
          if (classroom.isOccupied()) {
             boxNode.setStyle(STYLE_BASE + STYLE_RED);

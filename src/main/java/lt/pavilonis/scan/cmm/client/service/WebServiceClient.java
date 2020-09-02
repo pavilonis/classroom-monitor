@@ -2,11 +2,10 @@ package lt.pavilonis.scan.cmm.client.service;
 
 import javafx.application.Platform;
 import lt.pavilonis.scan.cmm.client.App;
-import lt.pavilonis.scan.cmm.client.representation.ClassroomOccupancy;
-import lt.pavilonis.util.TimeUtils;
+import lt.pavilonis.scan.cmm.client.util.TimeUtils;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,41 +24,39 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
 public class WebServiceClient {
-   private static final Logger LOG = getLogger(WebServiceClient.class.getSimpleName());
 
-   @Value(("${api.uri}"))
-   private String uri;
-
-   @Value(("${api.level}"))
-   private int level;
-
-   @Value(("${api.mock:false}"))
-   private boolean isMockWebService;
-
-   @Autowired
-   private RestTemplate restTemplate;
-
+   private static final Logger LOGGER = getLogger(WebServiceClient.class.getSimpleName());
+   private final String uri;
+   private final int level;
+   private final String building;
+   private final boolean isMockWebService;
+   private final RestTemplate restTemplate;
    private String lastErrorMessage;
 
-   // Sometimes gets marked as unused
-   public void load(Consumer<Optional<ClassroomOccupancy[]>> consumer) {
-      request(uri, consumer);
+   public WebServiceClient(@Value("${api.uri}") String uri,
+                           @Value("${api.level}") int level,
+                           @Value("${api.building:SCHOOL}") String building,
+                           @Value("${api.mock:false}") boolean isMockWebService,
+                           RestTemplate restTemplate) {
+      this.uri = uri;
+      this.level = level;
+      this.building = building;
+      this.isMockWebService = isMockWebService;
+      this.restTemplate = restTemplate;
    }
 
-   private void request(String url, Consumer<Optional<ClassroomOccupancy[]>> consumer) {
+   public void load(Consumer<Optional<ClassroomOccupancy[]>> consumer) {
       new BackgroundTask<>(() -> {
          LocalDateTime opStart = LocalDateTime.now();
-         ResponseEntity<ClassroomOccupancy[]> exchange = tryRequest(url);
+         ResponseEntity<ClassroomOccupancy[]> response = tryRequest(uri);
 
-         Optional<ClassroomOccupancy[]> result =
-               Optional.ofNullable(exchange == null ? null : exchange.getBody());
+         Optional<ClassroomOccupancy[]> result = Optional.ofNullable(response)
+               .map(HttpEntity::getBody);
 
          if (result.isPresent()) {
-            LOG.info("Request completed [duration={}, entries={}]",
-                  TimeUtils.duration(opStart), result.get().length);
+            LOGGER.info("Request completed [t={}, entries={}]", TimeUtils.duration(opStart), result.get().length);
          } else {
-            LOG.error("Request failed [duration={}, message={}]",
-                  TimeUtils.duration(opStart), lastErrorMessage);
+            LOGGER.error("Request failed [t={}, message={}]", TimeUtils.duration(opStart), lastErrorMessage);
          }
          App.clearWarning();
          Platform.runLater(() -> consumer.accept(result));
@@ -67,27 +64,12 @@ public class WebServiceClient {
    }
 
    private ResponseEntity<ClassroomOccupancy[]> tryRequest(String url) {
+      this.lastErrorMessage = null;
       try {
+         return isMockWebService
+               ? new ResponseEntity<>(new WebServiceMock().load(), HttpStatus.OK)
+               : request(url);
 
-         ResponseEntity<ClassroomOccupancy[]> response;
-
-         if (isMockWebService) {
-            LOG.info("Making mock request");
-            response = new ResponseEntity<>(new WebServiceMock().load(), HttpStatus.OK);
-
-         } else {
-
-            URI uri = UriComponentsBuilder.fromUriString(url)
-                  .queryParam("level", level)
-                  .build()
-                  .toUri();
-
-            LOG.info("Making request [uri={}]", uri.toString());
-            response = restTemplate.exchange(uri, HttpMethod.GET, null, ClassroomOccupancy[].class);
-         }
-
-         this.lastErrorMessage = null;
-         return response;
       } catch (HttpClientErrorException httpErr) {
 
          switch (httpErr.getStatusCode()) {
@@ -100,17 +82,29 @@ public class WebServiceClient {
             default:
                this.lastErrorMessage = httpErr.getMessage();
          }
-         LOG.error(this.lastErrorMessage);
+         LOGGER.error(this.lastErrorMessage);
 
       } catch (ResourceAccessException e) {
          this.lastErrorMessage = e.getCause() == null ? e.getMessage() : e.getCause().getMessage();
-         LOG.error(this.lastErrorMessage);
+         LOGGER.error(this.lastErrorMessage);
+
       } catch (Exception e) {
          e.printStackTrace();
          this.lastErrorMessage = e.getMessage();
-         LOG.error(this.lastErrorMessage);
+         LOGGER.error(this.lastErrorMessage);
       }
       return null;
+   }
+
+   private ResponseEntity<ClassroomOccupancy[]> request(String url) {
+      URI requestUri = UriComponentsBuilder.fromUriString(url)
+            .queryParam("level", level)
+            .queryParam("building", building)
+            .build()
+            .toUri();
+
+      LOGGER.info("Making request [uri={}]", requestUri);
+      return restTemplate.exchange(requestUri, HttpMethod.GET, null, ClassroomOccupancy[].class);
    }
 
    public Optional<String> getLastErrorMessage() {

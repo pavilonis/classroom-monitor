@@ -1,14 +1,16 @@
 package lt.pavilonis.scan.cmm.client.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MessageSourceAdapter {
 
-   @Autowired
-   private MessageSource messageSource;
+   private final MessageSource messageSource;
+
+   public MessageSourceAdapter(MessageSource messageSource) {
+      this.messageSource = messageSource;
+   }
 
    public String get(Object object, String propertyName) {
       String main;
@@ -17,7 +19,7 @@ public class MessageSourceAdapter {
          main = (String) object;
 
       } else if (object instanceof Class) {
-         Class clazz = (Class) object;
+         Class<?> clazz = (Class<?>) object;
 
          main = clazz.isAnonymousClass()
                ? "ANONYMOUS"

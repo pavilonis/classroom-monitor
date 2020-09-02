@@ -16,7 +16,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 
 public class App extends Application {
 
-   private final static Logger LOG = LoggerFactory.getLogger(App.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
    private static final StackPane ROOT_PANE = new StackPane();
    private static final WarningBox WARNING_BOX = new WarningBox(ROOT_PANE.getChildren());
    private static WebServiceClient wsClient;
@@ -40,7 +40,7 @@ public class App extends Application {
          stage.show();
 
       } catch (Exception e) {
-         LOG.error("Got error: " + e.getMessage());
+         LOGGER.error("Got error: {}", e.getMessage());
          e.printStackTrace();
       }
    }
