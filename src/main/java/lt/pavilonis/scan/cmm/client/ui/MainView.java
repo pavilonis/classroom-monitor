@@ -30,17 +30,17 @@ import java.util.Optional;
 public class MainView extends BorderPane {
 
    static final String FONT = "SansSerif";
-   static final int FONT_SIZE_SMALL = 56;
+   static final int FONT_SIZE_SMALL = 38;
    private static final Logger LOGGER = LoggerFactory.getLogger(MainView.class);
    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
    private static final String STYLE_BASE = "-fx-border-color: black; -fx-border-width:4px;" +
-         " -fx-border-radius: 30px; -fx-background-radius: 30px; ";
+         " -fx-border-radius: 20px; -fx-background-radius: 20px; ";
    private static final String STYLE_RED = "-fx-background-color: rgba(255, 0, 0, .66)";
    private static final String STYLE_GREEN = "-fx-background-color: rgba(0, 255, 0, .66)";
    private static final int INTERVAL_MIN = 1000;
    private static final int COUNTER_STEP = 50;
-   public static final int GRID_SIZE = 24;
-   private static final int GRID_COLUMNS = 8;
+   public static final int GRID_SIZE = 45;
+   private static final int GRID_COLUMNS = 9;
    private final List<ClassroomNode> nodes = initEmptyNodes();
    private final WebServiceClient wsClient;
    private final int updateInterval;
@@ -54,7 +54,7 @@ public class MainView extends BorderPane {
 
    public MainView(WebServiceClient wsClient,
                    @Value("${api.request.interval:5000}") int updateInterval,
-                   @Value("${font.size.title:94}") int fontSizeTitle,
+                   @Value("${font.size.title:54}") int fontSizeTitle,
                    MessageSourceAdapter messages,
                    Header header) {
 
@@ -70,7 +70,7 @@ public class MainView extends BorderPane {
       this.fontSizeTitle = fontSizeTitle;
 
       setCenter(createGrid(nodes));
-      setPadding(new Insets(36, 20, 20, 20));
+      setPadding(new Insets(0, 20, 20, 20));
 
       setTop(header);
       setBottom(footer);

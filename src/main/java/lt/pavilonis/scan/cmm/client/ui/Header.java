@@ -14,7 +14,7 @@ public class Header extends HBox {
                  @Value("${font.size.title:94}") int fontSizeTitle) {
 
       setAlignment(Pos.CENTER);
-      setPadding(new Insets(0, 0, 36, 0));
+      setPadding(new Insets(0, 0, 8, 0));
 
       Node textNode = MainView.createLabel(title, fontSizeTitle);
       getChildren().add(textNode);

@@ -6,10 +6,10 @@ import javafx.scene.layout.VBox;
 
 public class ClassroomNode extends VBox {
 
-   private static final int WIDTH = 220;
+   private static final int WIDTH = 186;
 
    public ClassroomNode() {
-      setPadding(new Insets(7));
+      setPadding(new Insets(5));
       setMinWidth(WIDTH);
       setMaxWidth(WIDTH);
       setAlignment(Pos.CENTER);
