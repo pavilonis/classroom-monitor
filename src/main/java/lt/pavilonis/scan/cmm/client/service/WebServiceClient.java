@@ -3,6 +3,7 @@ package lt.pavilonis.scan.cmm.client.service;
 import javafx.application.Platform;
 import lt.pavilonis.scan.cmm.client.App;
 import lt.pavilonis.scan.cmm.client.util.TimeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -27,19 +28,19 @@ public class WebServiceClient {
 
    private static final Logger LOGGER = getLogger(WebServiceClient.class.getSimpleName());
    private final String uri;
-   private final int level;
+   private final String[] levels;
    private final String building;
    private final boolean isMockWebService;
    private final RestTemplate restTemplate;
    private String lastErrorMessage;
 
    public WebServiceClient(@Value("${api.uri}") String uri,
-                           @Value("${api.level}") int level,
+                           @Value("${api.levels}") String levels,
                            @Value("${api.building:SCHOOL}") String building,
                            @Value("${api.mock:false}") boolean isMockWebService,
                            RestTemplate restTemplate) {
       this.uri = uri;
-      this.level = level;
+      this.levels = StringUtils.split(levels, ',');;
       this.building = building;
       this.isMockWebService = isMockWebService;
       this.restTemplate = restTemplate;
@@ -98,7 +99,7 @@ public class WebServiceClient {
 
    private ResponseEntity<ClassroomOccupancy[]> request(String url) {
       URI requestUri = UriComponentsBuilder.fromUriString(url)
-            .queryParam("level", level)
+            .queryParam("levels", levels)
             .queryParam("building", building)
             .build()
             .toUri();
