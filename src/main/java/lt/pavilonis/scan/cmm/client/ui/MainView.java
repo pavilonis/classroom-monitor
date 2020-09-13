@@ -132,7 +132,7 @@ public class MainView extends BorderPane {
 
       if (item.isPresent()) {
          ClassroomOccupancy classroom = item.get();
-         Node labelClassroomNumber = createLabel(String.valueOf(classroom.getClassroomNumber()), fontSizeTitle);
+         Node labelClassroomNumber = createLabel(formatString(classroom), fontSizeTitle);
 
          if (classroom.isOccupied()) {
             boxNode.setStyle(STYLE_BASE + STYLE_RED);
@@ -155,6 +155,13 @@ public class MainView extends BorderPane {
       } else {
          boxNode.setStyle("-fx-background-color: #fafafa");
       }
+   }
+
+   private String formatString(ClassroomOccupancy classroom) {
+      int number = classroom.getClassroomNumber();
+      return number < 100
+            ? "0" + number
+            : String.valueOf(number);
    }
 
    private List<ClassroomNode> initEmptyNodes() {
