@@ -21,10 +21,11 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class MainView extends BorderPane {
@@ -99,14 +100,15 @@ public class MainView extends BorderPane {
    private void performUpdate() {
       busy = true;
       wsClient.load(response -> {
-         if (response.isPresent()) {
-            List<ClassroomOccupancy> items = Arrays.asList(response.get());
-            items.sort(Comparator.comparingInt(ClassroomOccupancy::getClassroomNumber));
-            regularUpdate(items);
-
-         } else {
-            App.displayWarning("No response from server!");
-         }
+         response.ifPresentOrElse(
+               responseItems -> {
+                  List<ClassroomOccupancy> items = Stream.of(responseItems)
+                        .sorted(Comparator.comparingInt(ClassroomOccupancy::getClassroomNumber))
+                        .collect(toList());
+                  regularUpdate(items);
+               },
+               () -> App.displayWarning("No response from server!")
+         );
          counter = 0;
          footer.updateProgressValue(0);
          busy = false;
@@ -118,20 +120,22 @@ public class MainView extends BorderPane {
 
          ClassroomNode node = nodes.get(i);
 
-         Optional<ClassroomOccupancy> item = i < items.size()
-               ? Optional.of(items.get(i))
-               : Optional.empty();
-
-         updateNode(node, item);
+         if (i < items.size()) {
+            updateNode(node, items.get(i));
+         } else {
+            updateNode(node, null);
+         }
       }
    }
 
-   private void updateNode(ClassroomNode boxNode, Optional<ClassroomOccupancy> item) {
+   private void updateNode(ClassroomNode boxNode, ClassroomOccupancy classroom) {
       ObservableList<Node> contents = boxNode.getChildren();
       contents.clear();
 
-      if (item.isPresent()) {
-         ClassroomOccupancy classroom = item.get();
+      if (classroom == null) {
+         boxNode.setStyle("-fx-background-color: #fafafa");
+
+      } else {
          Node labelClassroomNumber = createLabel(formatString(classroom), fontSizeTitle);
 
          if (classroom.isOccupied()) {
@@ -151,9 +155,6 @@ public class MainView extends BorderPane {
             Node labelState = createLabel(messages.get(this, "free"), FONT_SIZE_SMALL);
             contents.addAll(createLabel("", FONT_SIZE_SMALL), labelClassroomNumber, labelState);
          }
-
-      } else {
-         boxNode.setStyle("-fx-background-color: #fafafa");
       }
    }
 
