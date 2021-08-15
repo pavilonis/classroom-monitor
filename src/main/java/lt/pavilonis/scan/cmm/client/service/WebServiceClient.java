@@ -36,11 +36,11 @@ public class WebServiceClient {
 
    public WebServiceClient(@Value("${api.uri}") String uri,
                            @Value("${api.levels}") String levels,
-                           @Value("${api.building:SCHOOL}") String building,
-                           @Value("${api.mock:false}") boolean isMockWebService,
+                           @Value("${api.building}") String building,
+                           @Value("${api.test-mode}") boolean isMockWebService,
                            RestTemplate restTemplate) {
       this.uri = uri;
-      this.levels = StringUtils.split(levels, ',');;
+      this.levels = StringUtils.split(levels, ',');
       this.building = building;
       this.isMockWebService = isMockWebService;
       this.restTemplate = restTemplate;

@@ -13,8 +13,8 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Base64;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -25,23 +25,25 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @PropertySource(value = {"file:${propertiesLocation:app.properties}"}, encoding = "UTF-8")
 public class AppConfig {
 
-   @Value("${api.auth.username}")
-   private String apiUsername;
+   private final String username;
+   private final String password;
 
-   @Value("${api.auth.password}")
-   private String apiPassword;
+   public AppConfig(@Value("${api.auth.username}") String username, @Value("${api.auth.password}") String password) {
+      this.username = username;
+      this.password = password;
+   }
 
    @Bean
    public RestTemplate getRestTemplate() {
-      RestTemplate rest = new RestTemplate();
-      rest.setInterceptors(Collections.singletonList(authenticatingInterceptor()));
-      rest.setMessageConverters(Collections.singletonList(new MappingJackson2HttpMessageConverter()));
+      var rest = new RestTemplate();
+      rest.setInterceptors(List.of(authenticatingInterceptor()));
+      rest.setMessageConverters(List.of(new MappingJackson2HttpMessageConverter()));
       return rest;
    }
 
    @Bean
    public ReloadableResourceBundleMessageSource messageSource() {
-      ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+      var messageSource = new ReloadableResourceBundleMessageSource();
       messageSource.setUseCodeAsDefaultMessage(true);
       messageSource.setBasename("classpath:lang/messages");
       messageSource.setCacheSeconds(0);
@@ -52,11 +54,8 @@ public class AppConfig {
 
    private ClientHttpRequestInterceptor authenticatingInterceptor() {
       return (request, body, execution) -> {
-         String creds = apiUsername + ":" + apiPassword;
-         byte[] base64credsBytes = Base64.getEncoder().encode(creds.getBytes());
-
          HttpHeaders headers = request.getHeaders();
-         headers.add("Authorization", "Basic " + new String(base64credsBytes));
+         headers.setBasicAuth(username, password);
          headers.setAccept(Collections.singletonList(APPLICATION_JSON));
          return execution.execute(request, body);
       };

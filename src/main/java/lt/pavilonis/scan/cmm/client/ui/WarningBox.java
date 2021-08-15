@@ -25,7 +25,7 @@ public class WarningBox extends HBox {
    }
 
    public void warning(String text) {
-      Text textNode = new Text(text);
+      var textNode = new Text(text);
       textNode.setStyle("-fx-padding: 10");
       textNode.setFont(Font.font(null, FontWeight.BOLD, 40));
       setStyle("-fx-background-color: #ffc550; -fx-background-radius: 10 10 10 10;");

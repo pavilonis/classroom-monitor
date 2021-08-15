@@ -12,7 +12,6 @@ import lt.pavilonis.scan.cmm.client.ui.WarningBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 
 public class App extends Application {
 
@@ -29,13 +28,13 @@ public class App extends Application {
    public void start(Stage stage) {
       try {
 
-         AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+         var context = new AnnotationConfigApplicationContext(AppConfig.class);
          wsClient = context.getBean(WebServiceClient.class);
 
          MainView mainView = context.getBean(MainView.class);
          ROOT_PANE.getChildren().add(mainView);
 
-         stage.setScene(createScene());
+         stage.setScene(createScene(ROOT_PANE));
          stage.setMaximized(true);
          stage.show();
 
@@ -45,8 +44,8 @@ public class App extends Application {
       }
    }
 
-   private Scene createScene() {
-      Scene scene = new Scene(ROOT_PANE, Color.WHITE);
+   private Scene createScene(StackPane rootPane) {
+      var scene = new Scene(rootPane, Color.WHITE);
       scene.setOnKeyPressed(event -> {
          if (event.getCode() == KeyCode.ESCAPE) {
             stop();
@@ -61,10 +60,11 @@ public class App extends Application {
    }
 
    public static void displayWarning(String text) {
-      if (wsClient.getLastErrorMessage().isPresent()) {
-         text += "\n" + wsClient.getLastErrorMessage().get();
-      }
-      WARNING_BOX.warning(text);
+      var textWithErrorMessage = wsClient.getLastErrorMessage()
+            .map(message -> text + "\n" + message)
+            .orElse(text);
+
+      WARNING_BOX.warning(textWithErrorMessage);
    }
 
    public static void clearWarning() {
