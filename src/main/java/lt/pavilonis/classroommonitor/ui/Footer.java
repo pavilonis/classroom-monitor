@@ -1,12 +1,12 @@
-package lt.pavilonis.scan.cmm.client.ui;
+package lt.pavilonis.classroommonitor.ui;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-
-import java.util.ResourceBundle;
+import lt.pavilonis.classroommonitor.Spring;
+import org.springframework.context.MessageSource;
 
 final class Footer extends HBox {
 
@@ -14,12 +14,10 @@ final class Footer extends HBox {
 
    Footer() {
       setSpacing(10);
-
       HBox.setHgrow(progressBar, Priority.ALWAYS);
       progressBar.setMaxWidth(Double.MAX_VALUE);
 
-      getChildren().addAll(createLabel(), progressBar);
-
+      getChildren().addAll(createVersionLabel(), progressBar);
       setAlignment(Pos.CENTER_LEFT);
    }
 
@@ -27,10 +25,11 @@ final class Footer extends HBox {
       progressBar.setProgress(progress);
    }
 
-   private Label createLabel() {
-      String version = ResourceBundle.getBundle("application")
-            .getString("application.version");
+   private Label createVersionLabel() {
+      String versionKey = Spring.getBean(MessageSource.class)
+            .getMessage("Footer.version", null, null);
 
-      return new Label(" v. " + version);
+      String versionValue = Spring.getStringProperty("application.version");
+      return new Label(versionKey + " " + versionValue);
    }
 }

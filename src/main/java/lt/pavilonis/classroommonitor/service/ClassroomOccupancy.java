@@ -1,4 +1,4 @@
-package lt.pavilonis.scan.cmm.client.service;
+package lt.pavilonis.classroommonitor.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

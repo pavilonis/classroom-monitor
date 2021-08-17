@@ -1,22 +1,22 @@
-package lt.pavilonis.scan.cmm.client.ui;
+package lt.pavilonis.classroommonitor.ui;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import lt.pavilonis.scan.cmm.client.App;
-import lt.pavilonis.scan.cmm.client.service.ClassroomOccupancy;
-import lt.pavilonis.scan.cmm.client.service.MessageSourceAdapter;
-import lt.pavilonis.scan.cmm.client.service.WebServiceClient;
+import lt.pavilonis.classroommonitor.Spring;
+import lt.pavilonis.classroommonitor.service.ClassroomOccupancy;
+import lt.pavilonis.classroommonitor.service.PeriodicalRunner;
+import lt.pavilonis.classroommonitor.service.WebServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.context.MessageSource;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,8 +27,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-@Component
-public class MainView extends BorderPane {
+public final class MainView extends BorderPane {
 
    static final String FONT = "SansSerif";
    static final int FONT_SIZE_SMALL = 56;
@@ -38,79 +37,47 @@ public class MainView extends BorderPane {
          " -fx-border-radius: 30px; -fx-background-radius: 30px; ";
    private static final String STYLE_RED = "-fx-background-color: rgba(255, 0, 0, .66)";
    private static final String STYLE_GREEN = "-fx-background-color: rgba(0, 255, 0, .66)";
-   private static final int INTERVAL_MIN = 1000;
-   private static final int COUNTER_STEP = 50;
    public static final int GRID_SIZE = 24;
    private static final int GRID_COLUMNS = 8;
    private final List<ClassroomNode> nodes = initEmptyNodes();
    private final WebServiceClient wsClient;
-   private final int updateInterval;
-   private final Footer footer = new Footer();
-   private final MessageSourceAdapter messages;
-   private final int offsetPositive;
-   private final int offsetNegative;
-   private final int fontSizeTitle;
-   private int counter;
+   private final MessageSource messages;
    private boolean busy;
 
-   public MainView(WebServiceClient wsClient,
-                   @Value("${api.request.interval:5000}") int updateInterval,
-                   @Value("${font.size.title:94}") int fontSizeTitle,
-                   MessageSourceAdapter messages,
-                   Header header) {
-
-      if (updateInterval < INTERVAL_MIN) {
-         LOGGER.error("Update interval is too small. Should be more than {}", INTERVAL_MIN);
-         throw new IllegalArgumentException("Update interval is too small");
-      }
-      this.wsClient = wsClient;
-      this.messages = messages;
-      this.updateInterval = updateInterval;
-      this.offsetPositive = updateInterval + COUNTER_STEP * 2;
-      this.offsetNegative = updateInterval - COUNTER_STEP * 2;
-      this.fontSizeTitle = fontSizeTitle;
+   public MainView() {
+      this.wsClient = Spring.getBean(WebServiceClient.class);
+      this.messages = Spring.getBean(MessageSource.class);
 
       setCenter(createGrid(nodes));
       setPadding(new Insets(36, 20, 20, 20));
+      setTop(new Header(Spring.getStringProperty("header.text"), Spring.getIntProperty("font.size.title")));
 
-      setTop(header);
+      var footer = new Footer();
       setBottom(footer);
+
+      PeriodicalRunner runner = Spring.getBean(PeriodicalRunner.class);
+      runner.setUpdateTask(this::performUpdate);
+      runner.setProgressConsumer(footer::updateProgressValue);
    }
 
-   @Scheduled(fixedRate = COUNTER_STEP)
-   public void count() {
-
+   private void performUpdate() {
       if (busy) {
          LOGGER.debug("Skipping update: busy");
          return;
       }
-
-      counter += COUNTER_STEP;
-
-      if (counter > offsetNegative && counter < offsetPositive) {
-
-         performUpdate();
-
-      } else {
-         double progress = counter / (double) updateInterval;
-         footer.updateProgressValue(progress);
-      }
-   }
-
-   private void performUpdate() {
       busy = true;
+      clearWarnings();
       wsClient.load(response -> {
-         response.ifPresentOrElse(
-               responseItems -> {
-                  List<ClassroomOccupancy> items = Stream.of(responseItems)
-                        .sorted(Comparator.comparingInt(ClassroomOccupancy::getClassroomNumber))
-                        .collect(toList());
-                  regularUpdate(items);
-               },
-               () -> App.displayWarning("No response from server!")
-         );
-         counter = 0;
-         footer.updateProgressValue(0);
+         if (response == null) {
+            displayWarning("No response from server!");
+
+         } else {
+            List<ClassroomOccupancy> items = Stream.of(response)
+                  .sorted(Comparator.comparingInt(ClassroomOccupancy::getClassroomNumber))
+                  .collect(toList());
+            regularUpdate(items);
+         }
+         ((Footer) getBottom()).updateProgressValue(0);
          busy = false;
       });
    }
@@ -136,7 +103,7 @@ public class MainView extends BorderPane {
          boxNode.setStyle("-fx-background-color: #fafafa");
 
       } else {
-         Node labelClassroomNumber = createLabel(formatString(classroom), fontSizeTitle);
+         Node labelClassroomNumber = createLabel(formatString(classroom), Spring.getIntProperty("font.size.title"));
 
          if (classroom.isOccupied()) {
             boxNode.setStyle(STYLE_BASE + STYLE_RED);
@@ -145,14 +112,14 @@ public class MainView extends BorderPane {
             String time = TIME_FORMAT.format(occupancyPeriodStart);
 
             Node labelTime = createLabel(time, FONT_SIZE_SMALL);
-            Node labelState = createLabel(messages.get(this, "occupied"), FONT_SIZE_SMALL);
+            Node labelState = createLabel(messages.getMessage("MainView.occupied", null, null), FONT_SIZE_SMALL);
 
             contents.addAll(labelTime, labelClassroomNumber, labelState);
 
          } else {
             boxNode.setStyle(STYLE_BASE + STYLE_GREEN);
 
-            Node labelState = createLabel(messages.get(this, "free"), FONT_SIZE_SMALL);
+            Node labelState = createLabel(messages.getMessage("MainView.free", null, null), FONT_SIZE_SMALL);
             contents.addAll(createLabel("", FONT_SIZE_SMALL), labelClassroomNumber, labelState);
          }
       }
@@ -194,5 +161,26 @@ public class MainView extends BorderPane {
       Text textNode = new Text(text);
       textNode.setFont(Font.font(FONT, FontWeight.NORMAL, size));
       return textNode;
+   }
+
+   public void displayWarning(String text) {
+      clearWarnings();
+      var textWithErrorMessage = wsClient.getLastErrorMessage()
+            .map(message -> text + "\n" + message)
+            .orElse(text);
+
+      var warningBox = new WarningBox(textWithErrorMessage);
+      warningBox.setOnMouseClicked(click -> getElements().remove(warningBox));
+
+      Platform.runLater(() -> getElements().add(warningBox));
+   }
+
+   public void clearWarnings() {
+      Platform.runLater(() -> getElements().removeIf(child -> child instanceof WarningBox));
+   }
+
+   private List<Node> getElements() {
+      StackPane rootPane = (StackPane) getParent();
+      return rootPane.getChildren();
    }
 }

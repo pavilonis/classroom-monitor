@@ -1,13 +1,13 @@
-package lt.pavilonis.scan.cmm.client.util;
+package lt.pavilonis.classroommonitor.service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-public class TimeUtils {
+final class TimeUtils {
 
    private TimeUtils() {/**/}
 
-   public static String duration(LocalDateTime start) {
+   static String duration(LocalDateTime start) {
       LocalDateTime now = LocalDateTime.now();
       long days = start.until(now, ChronoUnit.DAYS);
       start = start.plusDays(days);
