@@ -167,11 +167,10 @@ public final class MainView extends BorderPane {
    }
 
    public void displayWarning(Exception exception) {
-      clearWarnings();
       var warningBox = new WarningBox(extractMessage(exception));
 
       warningBox.setOnMouseClicked(click -> getElements().remove(warningBox));
-      Platform.runLater(() -> getElements().add(warningBox));
+      getElements().add(warningBox);
    }
 
    private String extractMessage(Exception e) {

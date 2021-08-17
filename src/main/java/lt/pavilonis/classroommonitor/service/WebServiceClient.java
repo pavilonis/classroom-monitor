@@ -58,7 +58,7 @@ public class WebServiceClient {
 
          } catch (Exception e) {
             LOGGER.error("Failed to get REST service response", e);
-            exceptionConsumer.accept(e);
+            Platform.runLater(() -> exceptionConsumer.accept(e));
          }
       });
    }
