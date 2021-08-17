@@ -9,16 +9,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import static java.time.LocalDateTime.now;
@@ -32,7 +29,6 @@ public class WebServiceClient {
    private final List<String> levels;
    private final String building;
    private final boolean testMode;
-   private String lastErrorMessage;
    private final RestTemplate restTemplate;
 
    public WebServiceClient(@Value("${api.uri}") String uri,
@@ -48,49 +44,23 @@ public class WebServiceClient {
       this.restTemplate = createRestTemplate(username, password);
    }
 
-   public void load(Consumer<ClassroomOccupancy[]> consumer) {
+   public void load(Consumer<ClassroomOccupancy[]> successConsumer, Consumer<Exception> exceptionConsumer) {
       runInBackground(() -> {
          var start = now();
-         ClassroomOccupancy[] response = tryRequest(uri);
 
-         if (response == null) {
-            LOGGER.error("Request failed [t={}, message={}]", TimeUtils.duration(start), lastErrorMessage);
-         } else {
+         try {
+            ClassroomOccupancy[] response = testMode
+                  ? new TestDataProvider().load()
+                  : request(uri);
+
             LOGGER.info("Request completed [t={}, entries={}]", TimeUtils.duration(start), response.length);
+            Platform.runLater(() -> successConsumer.accept(response));
+
+         } catch (Exception e) {
+            LOGGER.error("Failed to get REST service response", e);
+            exceptionConsumer.accept(e);
          }
-         Platform.runLater(() -> consumer.accept(response));
       });
-   }
-
-   private ClassroomOccupancy[] tryRequest(String url) {
-      this.lastErrorMessage = null;
-      try {
-         return testMode ? new TestDataProvider().load() : request(url);
-
-      } catch (HttpClientErrorException httpErr) {
-
-         switch (httpErr.getStatusCode()) {
-            case NOT_FOUND:
-               this.lastErrorMessage = "Resource not found";
-               break;
-            case CONFLICT:
-               this.lastErrorMessage = "Request conflict";
-               break;
-            default:
-               this.lastErrorMessage = httpErr.getMessage();
-         }
-         LOGGER.error(this.lastErrorMessage);
-
-      } catch (ResourceAccessException e) {
-         this.lastErrorMessage = e.getCause() == null ? e.getMessage() : e.getCause().getMessage();
-         LOGGER.error(this.lastErrorMessage);
-
-      } catch (Exception e) {
-         e.printStackTrace();
-         this.lastErrorMessage = e.getMessage();
-         LOGGER.error(this.lastErrorMessage);
-      }
-      return null;
    }
 
    private ClassroomOccupancy[] request(String url) {
@@ -106,12 +76,9 @@ public class WebServiceClient {
       if (response.getStatusCode().is2xxSuccessful()) {
          return response.getBody();
       }
+
       throw new HttpStatusCodeException(response.getStatusCode()) {
       };
-   }
-
-   public Optional<String> getLastErrorMessage() {
-      return Optional.ofNullable(lastErrorMessage);
    }
 
    public RestTemplate createRestTemplate(String username, String password) {

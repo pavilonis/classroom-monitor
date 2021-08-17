@@ -24,8 +24,7 @@ public final class JavaFxApp extends Application {
          stage.show();
 
       } catch (Exception e) {
-         LOGGER.error("Got error: {}", e.getMessage());
-         e.printStackTrace();
+         LOGGER.error("Could not start JavaFx app", e);
       }
    }
 

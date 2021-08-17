@@ -17,12 +17,15 @@ import lt.pavilonis.classroommonitor.service.WebServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -67,31 +70,31 @@ public final class MainView extends BorderPane {
       }
       busy = true;
       clearWarnings();
-      wsClient.load(response -> {
-         if (response == null) {
-            displayWarning("No response from server!");
-
-         } else {
-            List<ClassroomOccupancy> items = Stream.of(response)
-                  .sorted(Comparator.comparingInt(ClassroomOccupancy::getClassroomNumber))
-                  .collect(toList());
-            regularUpdate(items);
-         }
-         ((Footer) getBottom()).updateProgressValue(0);
+      try {
+         requestUpdate();
+      } finally {
          busy = false;
-      });
+         ((Footer) getBottom()).updateProgressValue(0);
+      }
+   }
+
+   private void requestUpdate() {
+      Consumer<ClassroomOccupancy[]> successConsumer = response -> {
+         List<ClassroomOccupancy> items = Stream.of(response)
+               .sorted(Comparator.comparingInt(ClassroomOccupancy::getClassroomNumber))
+               .collect(toList());
+         regularUpdate(items);
+      };
+
+      wsClient.load(successConsumer, this::displayWarning);
    }
 
    private void regularUpdate(List<ClassroomOccupancy> items) {
       for (int i = 0; i < GRID_SIZE; i++) {
-
          ClassroomNode node = nodes.get(i);
+         ClassroomOccupancy item = i < items.size() ? items.get(i) : null;
 
-         if (i < items.size()) {
-            updateNode(node, items.get(i));
-         } else {
-            updateNode(node, null);
-         }
+         updateNode(node, item);
       }
    }
 
@@ -163,16 +166,24 @@ public final class MainView extends BorderPane {
       return textNode;
    }
 
-   public void displayWarning(String text) {
+   public void displayWarning(Exception exception) {
       clearWarnings();
-      var textWithErrorMessage = wsClient.getLastErrorMessage()
-            .map(message -> text + "\n" + message)
-            .orElse(text);
+      var warningBox = new WarningBox(extractMessage(exception));
 
-      var warningBox = new WarningBox(textWithErrorMessage);
       warningBox.setOnMouseClicked(click -> getElements().remove(warningBox));
-
       Platform.runLater(() -> getElements().add(warningBox));
+   }
+
+   private String extractMessage(Exception e) {
+      if (e instanceof HttpClientErrorException) {
+         return "Unexpected HTTP response code: " + ((HttpClientErrorException) e).getStatusCode();
+
+      } else if (e instanceof ResourceAccessException) {
+         return "Could not access resource: " + (e.getCause() == null ? e.getMessage() : e.getCause().getMessage());
+
+      } else {
+         return "Unknown error: " + (e == null ? "" : e.getMessage());
+      }
    }
 
    public void clearWarnings() {
