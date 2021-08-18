@@ -6,7 +6,11 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import lt.pavilonis.classroommonitor.Spring;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.MessageSource;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 final class Footer extends HBox {
 
@@ -26,10 +30,13 @@ final class Footer extends HBox {
    }
 
    private Label createVersionLabel() {
-      String versionKey = Spring.getBean(MessageSource.class)
-            .getMessage("Footer.version", null, null);
+      BuildProperties buildProperties = Spring.getBean(BuildProperties.class);
+      MessageSource messages = Spring.getBean(MessageSource.class);
 
-      String versionValue = Spring.getStringProperty("application.version");
-      return new Label(versionKey + " " + versionValue);
+      Object[] messageParams =
+            {buildProperties.getVersion(), LocalDate.ofInstant(buildProperties.getTime(), ZoneId.systemDefault())};
+
+      String version = messages.getMessage("Footer.version", messageParams, null);
+      return new Label(version);
    }
 }
