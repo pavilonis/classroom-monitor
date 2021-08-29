@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.time.LocalDateTime.now;
@@ -26,19 +27,19 @@ public class WebServiceClient {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(WebServiceClient.class);
    private final String uri;
-   private final List<String> levels;
+   private final Set<String> levels;
    private final String building;
    private final boolean testMode;
    private final RestTemplate restTemplate;
 
    public WebServiceClient(@Value("${api.uri}") String uri,
-                           @Value("#{${api.levels}}") List<String> levels,
+                           @Value("${api.levels}") String[] levels,
                            @Value("${api.building}") String building,
                            @Value("api.auth.username") String username,
                            @Value("api.auth.password") String password,
                            @Value("${api.test-mode}") boolean testMode) {
       this.uri = uri;
-      this.levels = levels;
+      this.levels = Set.of(levels);
       this.building = building;
       this.testMode = testMode;
       this.restTemplate = createRestTemplate(username, password);
