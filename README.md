@@ -15,7 +15,7 @@ Install packages needed for displaying UI elements:
 Enable SSH access in **Interface Options -> SSH**   
 Change default password in **System Options -> password**  
 
-[Download **Bellsoft Liberica JRE 11** bellsoft-jre11.0.12+7-linux-arm32-vfp-hflt-full.deb](https://download.bell-sw.com/java/11.0.12+7/bellsoft-jre11.0.12+7-linux-arm32-vfp-hflt-full.deb)  
+[Download **Bellsoft Liberica JRE 11** (https://download.bell-sw.com/java/11.0.12+7/bellsoft-jre11.0.12+7-linux-arm32-vfp-hflt-full.deb)  
 Install it by running `sudo apt install ./package-file-name.deb`  
 
 create `/opt/classroom-monitor` directory and place there configuration file `app.properties` containing properties (change values):  
@@ -53,7 +53,8 @@ WantedBy=multi-user.target
 
 `sudo systemctl daemon-reload`  
 
-Enable application automatic startup
+Enable application automatic startup  
 `sudo systemctl enable classroom-monitor.service`  
+
 Save and restart application  
 `sudo reboot now`  
