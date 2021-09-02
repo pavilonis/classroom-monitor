@@ -35,8 +35,8 @@ public class WebServiceClient {
    public WebServiceClient(@Value("${api.uri}") String uri,
                            @Value("${api.levels}") String[] levels,
                            @Value("${api.building}") String building,
-                           @Value("api.auth.username") String username,
-                           @Value("api.auth.password") String password,
+                           @Value("${api.auth.username}") String username,
+                           @Value("${api.auth.password}") String password,
                            @Value("${api.test-mode}") boolean testMode) {
       this.uri = uri;
       this.levels = Set.of(levels);
