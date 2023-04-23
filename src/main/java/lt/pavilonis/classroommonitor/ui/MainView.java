@@ -1,40 +1,33 @@
 package lt.pavilonis.classroommonitor.ui;
 
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import lt.pavilonis.classroommonitor.Spring;
+import lombok.extern.slf4j.Slf4j;
 import lt.pavilonis.classroommonitor.service.ClassroomOccupancy;
-import lt.pavilonis.classroommonitor.service.PeriodicalRunner;
-import lt.pavilonis.classroommonitor.service.WebServiceClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static lt.pavilonis.classroommonitor.util.LabelUtils.createLabel;
 
+@Component
+@Slf4j
 public final class MainView extends BorderPane {
 
-   static final String FONT = "SansSerif";
    static final int FONT_SIZE_SMALL = 56;
-   private static final Logger LOGGER = LoggerFactory.getLogger(MainView.class);
    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
    private static final String STYLE_BASE = "-fx-border-color: black; -fx-border-width:4px;" +
          " -fx-border-radius: 30px; -fx-background-radius: 30px; ";
@@ -43,53 +36,29 @@ public final class MainView extends BorderPane {
    public static final int GRID_SIZE = 24;
    private static final int GRID_COLUMNS = 8;
    private final List<ClassroomNode> nodes = initEmptyNodes();
-   private final WebServiceClient wsClient;
-   private final MessageSource messages;
-   private boolean busy;
+   private final String messageOccupied;
+   private final String messageFree;
+   private final int titleSize;
 
-   public MainView() {
-      this.wsClient = Spring.getBean(WebServiceClient.class);
-      this.messages = Spring.getBean(MessageSource.class);
+   public MainView(MessageSource messages, Footer footer, Header header,
+                   @Value("${font.size.title}") int titleSize) {
 
+      this.titleSize = titleSize;
+      this.messageOccupied = messages.getMessage("MainView.occupied", null, null);
+      this.messageFree = messages.getMessage("MainView.free", null, null);
+
+      setTop(header);
       setCenter(createGrid(nodes));
-      setPadding(new Insets(36, 20, 20, 20));
-      setTop(new Header(Spring.getStringProperty("header.text"), Spring.getIntProperty("font.size.title")));
-
-      var footer = new Footer();
       setBottom(footer);
 
-      PeriodicalRunner runner = Spring.getBean(PeriodicalRunner.class);
-      runner.setUpdateTask(this::performUpdate);
-      runner.setProgressConsumer(footer::updateProgressValue);
+      setPadding(new Insets(36, 20, 20, 20));
    }
 
-   private void performUpdate() {
-      if (busy) {
-         LOGGER.debug("Skipping update: busy");
-         return;
-      }
-      busy = true;
-      clearWarnings();
-      try {
-         requestUpdate();
-      } finally {
-         busy = false;
-         ((Footer) getBottom()).updateProgressValue(0);
-      }
-   }
+   public void regularUpdate(List<ClassroomOccupancy> items) {
+      items = items.stream()
+            .sorted(comparing(ClassroomOccupancy::getName))
+            .collect(toList());
 
-   private void requestUpdate() {
-      Consumer<ClassroomOccupancy[]> successConsumer = response -> {
-         List<ClassroomOccupancy> items = Stream.of(response)
-               .sorted(Comparator.comparingInt(ClassroomOccupancy::getClassroomNumber))
-               .collect(toList());
-         regularUpdate(items);
-      };
-
-      wsClient.load(successConsumer, this::displayWarning);
-   }
-
-   private void regularUpdate(List<ClassroomOccupancy> items) {
       for (int i = 0; i < GRID_SIZE; i++) {
          ClassroomNode node = nodes.get(i);
          ClassroomOccupancy item = i < items.size() ? items.get(i) : null;
@@ -104,35 +73,36 @@ public final class MainView extends BorderPane {
 
       if (classroom == null) {
          boxNode.setStyle("-fx-background-color: #fafafa");
+         return;
+      }
+
+      Node labelClassroomNumber = createLabel(formatString(classroom), titleSize);
+
+      if (classroom.isOccupied()) {
+         boxNode.setStyle(STYLE_BASE + STYLE_RED);
+
+         LocalDateTime occupancyPeriodStart = classroom.getDateTime();
+         String time = TIME_FORMAT.format(occupancyPeriodStart);
+
+         Node labelTime = createLabel(time, FONT_SIZE_SMALL);
+         Node labelState = createLabel(messageOccupied, FONT_SIZE_SMALL);
+
+         contents.addAll(labelTime, labelClassroomNumber, labelState);
 
       } else {
-         Node labelClassroomNumber = createLabel(formatString(classroom), Spring.getIntProperty("font.size.title"));
+         boxNode.setStyle(STYLE_BASE + STYLE_GREEN);
 
-         if (classroom.isOccupied()) {
-            boxNode.setStyle(STYLE_BASE + STYLE_RED);
-
-            LocalDateTime occupancyPeriodStart = classroom.getDateTime();
-            String time = TIME_FORMAT.format(occupancyPeriodStart);
-
-            Node labelTime = createLabel(time, FONT_SIZE_SMALL);
-            Node labelState = createLabel(messages.getMessage("MainView.occupied", null, null), FONT_SIZE_SMALL);
-
-            contents.addAll(labelTime, labelClassroomNumber, labelState);
-
-         } else {
-            boxNode.setStyle(STYLE_BASE + STYLE_GREEN);
-
-            Node labelState = createLabel(messages.getMessage("MainView.free", null, null), FONT_SIZE_SMALL);
-            contents.addAll(createLabel("", FONT_SIZE_SMALL), labelClassroomNumber, labelState);
-         }
+         Node labelState = createLabel(messageFree, FONT_SIZE_SMALL);
+         contents.addAll(createLabel("", FONT_SIZE_SMALL), labelClassroomNumber, labelState);
       }
    }
 
    private String formatString(ClassroomOccupancy classroom) {
-      int number = classroom.getClassroomNumber();
-      return number < 100
-            ? "0" + number
-            : String.valueOf(number);
+      return classroom.getName();
+//      int number = classroom.getName();
+//      return number < 100
+//            ? "0" + number
+//            : String.valueOf(number);
    }
 
    private List<ClassroomNode> initEmptyNodes() {
@@ -160,12 +130,6 @@ public final class MainView extends BorderPane {
       return grid;
    }
 
-   static Node createLabel(String text, int size) {
-      Text textNode = new Text(text);
-      textNode.setFont(Font.font(FONT, FontWeight.NORMAL, size));
-      return textNode;
-   }
-
    public void displayWarning(Exception exception) {
       var warningBox = new WarningBox(extractMessage(exception));
 
@@ -186,7 +150,7 @@ public final class MainView extends BorderPane {
    }
 
    public void clearWarnings() {
-      Platform.runLater(() -> getElements().removeIf(child -> child instanceof WarningBox));
+      getElements().removeIf(child -> child instanceof WarningBox);
    }
 
    private List<Node> getElements() {

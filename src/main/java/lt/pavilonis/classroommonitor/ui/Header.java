@@ -4,14 +4,21 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-final class Header extends HBox {
+import static lt.pavilonis.classroommonitor.util.LabelUtils.createLabel;
 
-   Header(String title, int fontSizeTitle) {
+@Component
+public final class Header extends HBox {
+
+   public Header(@Value("${header.text}") String headerText,
+                 @Value("${font.size.title}") int headerSize) {
+
       setAlignment(Pos.CENTER);
       setPadding(new Insets(0, 0, 36, 0));
 
-      Node textNode = MainView.createLabel(title, fontSizeTitle);
+      Node textNode = createLabel(headerText, headerSize);
       getChildren().add(textNode);
    }
 }

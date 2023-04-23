@@ -8,27 +8,32 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toList;
+import static lt.pavilonis.classroommonitor.util.NumberUtils.extractNumber;
+
 final class TestDataProvider {
 
-   ClassroomOccupancy[] load() {
+   private static final Random RANDOM = new Random();
 
+   List<ClassroomOccupancy> load() {
       Set<Integer> classroomNames = new HashSet<>(MainView.GRID_SIZE);
       while (classroomNames.size() < MainView.GRID_SIZE) {
          classroomNames.add(randomInt(100, 200));
       }
 
       return classroomNames.stream()
-            .map(number -> new ClassroomOccupancy(randomLocalDateTime(), randomBoolean(), number))
-            .toArray(ClassroomOccupancy[]::new);
+            .map(number -> new ClassroomOccupancy(extractNumber(number + " sample text"), randomBoolean(), randomLocalDateTime()))
+            .collect(toList());
    }
 
    private LocalDateTime randomLocalDateTime() {
       LocalDate start = LocalDate.of(1970, Month.JANUARY, 1);
       long days = ChronoUnit.DAYS.between(start, LocalDate.now());
-      LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
+      LocalDate randomDate = start.plusDays(RANDOM.nextInt((int) days + 1));
       LocalTime randomTime = LocalTime.MIN.plusMinutes(randomInt(480, 1250));
       return randomDate.atTime(randomTime);
    }
@@ -38,7 +43,6 @@ final class TestDataProvider {
    }
 
    public int randomInt(int min, int max) {
-      Random random = new Random();
-      return random.nextInt(max - min) + min;
+      return RANDOM.nextInt(max - min) + min;
    }
 }

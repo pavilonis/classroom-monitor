@@ -1,0 +1,350 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions
+      xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+      xmlns:tns="http://soap.ws.ts1000.tesa.es/"
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns="http://schemas.xmlsoap.org/wsdl/"
+      targetNamespace="http://soap.ws.ts1000.tesa.es/" name="DoorsWebService">
+   <types>
+      <xsd:schema>
+         <xsd:import namespace="http://soap.ws.ts1000.tesa.es/"
+                     schemaLocation="DoorsWebService.xsd"/>
+      </xsd:schema>
+   </types>
+   <message name="getVersion">
+      <part name="parameters" element="tns:getVersion"/>
+   </message>
+   <message name="getVersionResponse">
+      <part name="parameters" element="tns:getVersionResponse"/>
+   </message>
+   <message name="doorGetAllByLockdownArea">
+      <part name="parameters" element="tns:doorGetAllByLockdownArea"/>
+   </message>
+   <message name="doorGetAllByLockdownAreaResponse">
+      <part name="parameters" element="tns:doorGetAllByLockdownAreaResponse"/>
+   </message>
+   <message name="doorRetrieveOpenings">
+      <part name="parameters" element="tns:doorRetrieveOpenings"/>
+   </message>
+   <message name="doorRetrieveOpeningsResponse">
+      <part name="parameters" element="tns:doorRetrieveOpeningsResponse"/>
+   </message>
+   <message name="siteLockDown">
+      <part name="parameters" element="tns:siteLockDown"/>
+   </message>
+   <message name="siteLockDownResponse">
+      <part name="parameters" element="tns:siteLockDownResponse"/>
+   </message>
+   <message name="doorClose">
+      <part name="parameters" element="tns:doorClose"/>
+   </message>
+   <message name="doorCloseResponse">
+      <part name="parameters" element="tns:doorCloseResponse"/>
+   </message>
+   <message name="doorBlock">
+      <part name="parameters" element="tns:doorBlock"/>
+   </message>
+   <message name="doorBlockResponse">
+      <part name="parameters" element="tns:doorBlockResponse"/>
+   </message>
+   <message name="doorDiagnostic">
+      <part name="parameters" element="tns:doorDiagnostic"/>
+   </message>
+   <message name="doorDiagnosticResponse">
+      <part name="parameters" element="tns:doorDiagnosticResponse"/>
+   </message>
+   <message name="doorUnblock">
+      <part name="parameters" element="tns:doorUnblock"/>
+   </message>
+   <message name="doorUnblockResponse">
+      <part name="parameters" element="tns:doorUnblockResponse"/>
+   </message>
+   <message name="doorUpdate">
+      <part name="parameters" element="tns:doorUpdate"/>
+   </message>
+   <message name="doorUpdateResponse">
+      <part name="parameters" element="tns:doorUpdateResponse"/>
+   </message>
+   <message name="doorPassage">
+      <part name="parameters" element="tns:doorPassage"/>
+   </message>
+   <message name="doorPassageResponse">
+      <part name="parameters" element="tns:doorPassageResponse"/>
+   </message>
+   <message name="doorSetTime">
+      <part name="parameters" element="tns:doorSetTime"/>
+   </message>
+   <message name="doorSetTimeResponse">
+      <part name="parameters" element="tns:doorSetTimeResponse"/>
+   </message>
+   <message name="doorGetAll">
+      <part name="parameters" element="tns:doorGetAll"/>
+   </message>
+   <message name="doorGetAllResponse">
+      <part name="parameters" element="tns:doorGetAllResponse"/>
+   </message>
+   <message name="doorOpen">
+      <part name="parameters" element="tns:doorOpen"/>
+   </message>
+   <message name="doorOpenResponse">
+      <part name="parameters" element="tns:doorOpenResponse"/>
+   </message>
+   <message name="doorGetInfo">
+      <part name="parameters" element="tns:doorGetInfo"/>
+   </message>
+   <message name="doorGetInfoResponse">
+      <part name="parameters" element="tns:doorGetInfoResponse"/>
+   </message>
+   <portType name="WirelessDoorsService">
+      <operation name="getVersion">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/getVersionRequest"
+               message="tns:getVersion"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/getVersionResponse"
+               message="tns:getVersionResponse"/>
+      </operation>
+      <operation name="doorGetAllByLockdownArea">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorGetAllByLockdownAreaRequest"
+               message="tns:doorGetAllByLockdownArea"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorGetAllByLockdownAreaResponse"
+               message="tns:doorGetAllByLockdownAreaResponse"/>
+      </operation>
+      <operation name="doorRetrieveOpenings">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorRetrieveOpeningsRequest"
+               message="tns:doorRetrieveOpenings"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorRetrieveOpeningsResponse"
+               message="tns:doorRetrieveOpeningsResponse"/>
+      </operation>
+      <operation name="siteLockDown">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/siteLockDownRequest"
+               message="tns:siteLockDown"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/siteLockDownResponse"
+               message="tns:siteLockDownResponse"/>
+      </operation>
+      <operation name="doorClose">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorCloseRequest"
+               message="tns:doorClose"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorCloseResponse"
+               message="tns:doorCloseResponse"/>
+      </operation>
+      <operation name="doorBlock">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorBlockRequest"
+               message="tns:doorBlock"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorBlockResponse"
+               message="tns:doorBlockResponse"/>
+      </operation>
+      <operation name="doorDiagnostic">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorDiagnosticRequest"
+               message="tns:doorDiagnostic"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorDiagnosticResponse"
+               message="tns:doorDiagnosticResponse"/>
+      </operation>
+      <operation name="doorUnblock">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorUnblockRequest"
+               message="tns:doorUnblock"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorUnblockResponse"
+               message="tns:doorUnblockResponse"/>
+      </operation>
+      <operation name="doorUpdate">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorUpdateRequest"
+               message="tns:doorUpdate"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorUpdateResponse"
+               message="tns:doorUpdateResponse"/>
+      </operation>
+      <operation name="doorPassage">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorPassageRequest"
+               message="tns:doorPassage"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorPassageResponse"
+               message="tns:doorPassageResponse"/>
+      </operation>
+      <operation name="doorSetTime">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorSetTimeRequest"
+               message="tns:doorSetTime"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorSetTimeResponse"
+               message="tns:doorSetTimeResponse"/>
+      </operation>
+      <operation name="doorGetAll">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorGetAllRequest"
+               message="tns:doorGetAll"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorGetAllResponse"
+               message="tns:doorGetAllResponse"/>
+      </operation>
+      <operation name="doorOpen">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorOpenRequest"
+               message="tns:doorOpen"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorOpenResponse"
+               message="tns:doorOpenResponse"/>
+      </operation>
+      <operation name="doorGetInfo">
+         <input
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorGetInfoRequest"
+               message="tns:doorGetInfo"/>
+         <output
+               wsam:Action="http://soap.ws.ts1000.tesa.es/WirelessDoorsService/doorGetInfoResponse"
+               message="tns:doorGetInfoResponse"/>
+      </operation>
+   </portType>
+   <binding name="WirelessDoorsServicePortBinding" type="tns:WirelessDoorsService">
+      <soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+                    style="document"/>
+      <operation name="getVersion">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorGetAllByLockdownArea">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorRetrieveOpenings">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="siteLockDown">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorClose">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorBlock">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorDiagnostic">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorUnblock">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorUpdate">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorPassage">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorSetTime">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorGetAll">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorOpen">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+      <operation name="doorGetInfo">
+         <soap:operation soapAction=""/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+   </binding>
+   <service name="DoorsWebService">
+      <port name="WirelessDoorsServicePort"
+            binding="tns:WirelessDoorsServicePortBinding">
+         <soap:address
+               location="https://localhost:8181/TesaSmartairPlatform/DoorsWebService"/>
+      </port>
+   </service>
+</definitions>

@@ -1,0 +1,604 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema xmlns:tns="http://soap.ws.ts1000.tesa.es/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0"
+           targetNamespace="http://soap.ws.ts1000.tesa.es/">
+   <xs:element name="cabinetStateInfo" type="tns:cabinetStateInfo"/>
+   <xs:element name="doorBlock" type="tns:doorBlock"/>
+   <xs:element name="doorBlockResponse" type="tns:doorBlockResponse"/>
+   <xs:element name="doorClose" type="tns:doorClose"/>
+   <xs:element name="doorCloseResponse" type="tns:doorCloseResponse"/>
+   <xs:element name="doorDiagnostic" type="tns:doorDiagnostic"/>
+   <xs:element name="doorDiagnosticResponse" type="tns:doorDiagnosticResponse"/>
+   <xs:element name="doorGetAll" type="tns:doorGetAll"/>
+   <xs:element name="doorGetAllByLockdownArea"
+               type="tns:doorGetAllByLockdownArea"/>
+   <xs:element name="doorGetAllByLockdownAreaResponse"
+               type="tns:doorGetAllByLockdownAreaResponse"/>
+   <xs:element name="doorGetAllResponse" type="tns:doorGetAllResponse"/>
+   <xs:element name="doorGetInfo" type="tns:doorGetInfo"/>
+   <xs:element name="doorGetInfoResponse" type="tns:doorGetInfoResponse"/>
+   <xs:element name="doorOpen" type="tns:doorOpen"/>
+   <xs:element name="doorOpenResponse" type="tns:doorOpenResponse"/>
+   <xs:element name="doorPassage" type="tns:doorPassage"/>
+   <xs:element name="doorPassageResponse" type="tns:doorPassageResponse"/>
+   <xs:element name="doorRetrieveOpenings" type="tns:doorRetrieveOpenings"/>
+   <xs:element name="doorRetrieveOpeningsResponse"
+               type="tns:doorRetrieveOpeningsResponse"/>
+   <xs:element name="doorSetTime" type="tns:doorSetTime"/>
+   <xs:element name="doorSetTimeResponse" type="tns:doorSetTimeResponse"/>
+   <xs:element name="doorStateInfo" type="tns:doorStateInfo"/>
+   <xs:element name="doorUnblock" type="tns:doorUnblock"/>
+   <xs:element name="doorUnblockResponse" type="tns:doorUnblockResponse"/>
+   <xs:element name="doorUpdate" type="tns:doorUpdate"/>
+   <xs:element name="doorUpdateResponse" type="tns:doorUpdateResponse"/>
+   <xs:element name="getVersion" type="tns:getVersion"/>
+   <xs:element name="getVersionResponse" type="tns:getVersionResponse"/>
+   <xs:element name="lockdownRequest" type="tns:lockdownRequest"/>
+   <xs:element name="operationResult" type="tns:operationResult"/>
+   <xs:element name="rfModuleInfo" type="tns:rfModuleInfo"/>
+   <xs:element name="siteLockDown" type="tns:siteLockDown"/>
+   <xs:element name="siteLockDownResponse" type="tns:siteLockDownResponse"/>
+   <xs:element name="systemInfo" type="tns:systemInfo"/>
+   <xs:element name="wirelessDoor" type="tns:wirelessDoor"/>
+   <xs:element name="wirelessDoorListLockDownAreas"
+               type="tns:wirelessDoorListLockDownAreas"/>
+   <xs:element name="wirelessResult" type="tns:wirelessResult"/>
+   <xs:element name="wirelessResultDoorList" type="tns:wirelessResultDoorList"/>
+   <xs:element name="wirelessResultDoorListLockdownAreas"
+               type="tns:wirelessResultDoorListLockdownAreas"/>
+   <xs:element name="wirelessResultRFModuleInfo"
+               type="tns:wirelessResultRFModuleInfo"/>
+   <xs:complexType name="doorBlock">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorBlockResponse">
+      <xs:sequence>
+         <xs:element name="operationResult" type="tns:wirelessResult" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="wirelessResult">
+      <xs:complexContent>
+         <xs:extension base="tns:operationResult">
+            <xs:sequence>
+               <xs:element name="doorInfo" type="tns:wirelessDoor" minOccurs="0"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="operationResult">
+      <xs:sequence>
+         <xs:element name="detail" type="xs:string" minOccurs="0"/>
+         <xs:element name="errorCode" type="xs:string" minOccurs="0"/>
+         <xs:element name="errorDetail" type="xs:string" minOccurs="0"/>
+         <xs:element name="errorType" type="tns:errorType" minOccurs="0"/>
+         <xs:element name="operationId" type="xs:string" minOccurs="0"/>
+         <xs:element name="type" type="tns:resultType" minOccurs="0"/>
+         <xs:element name="warningCode" type="xs:string" minOccurs="0"/>
+         <xs:element name="warningType" type="tns:warningType" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="wirelessDoor">
+      <xs:sequence>
+         <xs:element name="batteryLevel" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorStateInfo" type="tns:doorStateInfo" minOccurs="0"/>
+         <xs:element name="doorType" type="tns:doorType" minOccurs="0"/>
+         <xs:element name="doorVersion" type="xs:string" minOccurs="0"/>
+         <xs:element name="groupName" type="xs:string" minOccurs="0"/>
+         <xs:element name="hubIPAddress" type="xs:string" minOccurs="0"/>
+         <xs:element name="hubName" type="xs:string" minOccurs="0"/>
+         <xs:element name="hubServiceWSDL" type="xs:string" minOccurs="0"/>
+         <xs:element name="hubVersion" type="xs:string" minOccurs="0"/>
+         <xs:element name="lockdownAreaId" type="xs:int" minOccurs="0"/>
+         <xs:element name="lockdownState" type="xs:int" minOccurs="0"/>
+         <xs:element name="notSupportedDoor" type="xs:boolean" minOccurs="0"/>
+         <xs:element name="rfMacAddress" type="xs:string" minOccurs="0"/>
+         <xs:element name="rfSignal" type="xs:int" minOccurs="0"/>
+         <xs:element name="rfState" type="tns:rfStatusType" minOccurs="0"/>
+         <xs:element name="rfVersion" type="xs:string" minOccurs="0"/>
+         <xs:element name="updateRequired" type="xs:boolean" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorStateInfo">
+      <xs:sequence>
+         <xs:element name="batteryPercentage" type="xs:int" minOccurs="0"/>
+         <xs:element name="batteryStatus" type="tns:batteryStatusType" minOccurs="0"/>
+         <xs:element name="cabinetState" type="tns:cabinetStateInfo" minOccurs="0"/>
+         <xs:element name="emergency" type="xs:boolean" minOccurs="0"/>
+         <xs:element name="mode" type="tns:blockModeType" minOccurs="0"/>
+         <xs:element name="physicalState" type="tns:physicalStateType" minOccurs="0"/>
+         <xs:element name="privacy" type="xs:boolean" minOccurs="0"/>
+         <xs:element name="state" type="tns:stateType" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="cabinetStateInfo">
+      <xs:sequence>
+         <xs:element name="state" type="tns:cabinetStatusType" minOccurs="0"/>
+         <xs:element name="userId" type="xs:int" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorClose">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorCloseResponse">
+      <xs:sequence>
+         <xs:element name="operationResult" type="tns:wirelessResult" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="siteLockDown">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="lockdownInfo" type="tns:lockdownRequest" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="lockdownRequest">
+      <xs:sequence>
+         <xs:element name="areaId" type="xs:int" nillable="true" minOccurs="0"
+                     maxOccurs="unbounded"/>
+         <xs:element name="mode" type="tns:lockdownMode" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="siteLockDownResponse">
+      <xs:sequence>
+         <xs:element name="operationResult" type="tns:operationResult" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorUnblock">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorUnblockResponse">
+      <xs:sequence>
+         <xs:element name="operationResult" type="tns:wirelessResult" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorGetAllByLockdownArea">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorGetAllByLockdownAreaResponse">
+      <xs:sequence>
+         <xs:element name="operationResultAssignedRFModules"
+                     type="tns:wirelessResultDoorListLockdownAreas" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="wirelessResultDoorListLockdownAreas">
+      <xs:complexContent>
+         <xs:extension base="tns:wirelessResult">
+            <xs:sequence>
+               <xs:element name="areas" type="tns:wirelessDoorListLockDownAreas"
+                           nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="wirelessDoorListLockDownAreas">
+      <xs:sequence>
+         <xs:element name="areaHasNotSupportedDoors" type="xs:boolean" minOccurs="0"/>
+         <xs:element name="areaHasPendingDoors" type="xs:boolean" minOccurs="0"/>
+         <xs:element name="areaId" type="xs:int" minOccurs="0"/>
+         <xs:element name="areaInExecution" type="xs:boolean" minOccurs="0"/>
+         <xs:element name="areaName" type="xs:string" minOccurs="0"/>
+         <xs:element name="wirelessDoors" type="tns:wirelessResultDoorList"
+                     minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="wirelessResultDoorList">
+      <xs:complexContent>
+         <xs:extension base="tns:wirelessResult">
+            <xs:sequence>
+               <xs:element name="recordCount" type="xs:int" minOccurs="0"/>
+               <xs:element name="wirelessDoor" type="tns:wirelessDoor" nillable="true"
+                           minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="doorUpdate">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorUpdateResponse">
+      <xs:sequence>
+         <xs:element name="operationResult" type="tns:wirelessResult" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorPassage">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorPassageResponse">
+      <xs:sequence>
+         <xs:element name="operationResult" type="tns:wirelessResult" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="getVersion">
+      <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name="getVersionResponse">
+      <xs:sequence>
+         <xs:element name="systemInfo" type="tns:systemInfo" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="systemInfo">
+      <xs:sequence>
+         <xs:element name="dataVersion" type="xs:string" minOccurs="0"/>
+         <xs:element name="platformVersion" type="xs:string" minOccurs="0"/>
+         <xs:element name="portAgentCommunication" type="xs:int" minOccurs="0"/>
+         <xs:element name="portAgentRegistration" type="xs:int" minOccurs="0"/>
+         <xs:element name="portEncodingService" type="xs:int" minOccurs="0"/>
+         <xs:element name="portPMS" type="xs:int" minOccurs="0"/>
+         <xs:element name="siteId" type="xs:string" minOccurs="0"/>
+         <xs:element name="siteName" type="xs:string" minOccurs="0"/>
+         <xs:element name="siteNameShort" type="xs:string" minOccurs="0"/>
+         <xs:element name="systemTime" type="xs:dateTime" minOccurs="0"/>
+         <xs:element name="systemType" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorOpen">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorOpenResponse">
+      <xs:sequence>
+         <xs:element name="operationResult" type="tns:wirelessResult" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorRetrieveOpenings">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorRetrieveOpeningsResponse">
+      <xs:sequence>
+         <xs:element name="operationResult" type="tns:wirelessResult" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorGetAll">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorGetAllResponse">
+      <xs:sequence>
+         <xs:element name="operationResultAssignedRFModules"
+                     type="tns:wirelessResultDoorList" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorDiagnostic">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorDiagnosticResponse">
+      <xs:sequence>
+         <xs:element name="operationResultRFDiagnostic"
+                     type="tns:wirelessResultRFModuleInfo" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="wirelessResultRFModuleInfo">
+      <xs:complexContent>
+         <xs:extension base="tns:wirelessResult">
+            <xs:sequence>
+               <xs:element name="rfModuleInfo" type="tns:rfModuleInfo" minOccurs="0"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="rfModuleInfo">
+      <xs:sequence>
+         <xs:element name="descrDevice" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorDeviceType" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorStateInfo" type="tns:doorStateInfo" minOccurs="0"/>
+         <xs:element name="doorVersion" type="xs:string" minOccurs="0"/>
+         <xs:element name="hubName" type="xs:string" minOccurs="0"/>
+         <xs:element name="lockResponse" type="xs:boolean" minOccurs="0"/>
+         <xs:element name="lqi" type="xs:int" minOccurs="0"/>
+         <xs:element name="macAddress" type="xs:string" minOccurs="0"/>
+         <xs:element name="signal" type="xs:int" minOccurs="0"/>
+         <xs:element name="status" type="tns:rfStatusType" minOccurs="0"/>
+         <xs:element name="statusBytes" type="xs:string" minOccurs="0"/>
+         <xs:element name="version" type="xs:string" minOccurs="0"/>
+         <xs:element name="tSleep" type="xs:int" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorSetTime">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorSetTimeResponse">
+      <xs:sequence>
+         <xs:element name="operationResult" type="tns:wirelessResult" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorGetInfo">
+      <xs:sequence>
+         <xs:element name="operatorName" type="xs:string" minOccurs="0"/>
+         <xs:element name="operatorPassword" type="xs:string" minOccurs="0"/>
+         <xs:element name="doorId" type="xs:int" minOccurs="0"/>
+         <xs:element name="doorName" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="doorGetInfoResponse">
+      <xs:sequence>
+         <xs:element name="operationResultAssignedRFModules"
+                     type="tns:wirelessResultDoorList" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:simpleType name="batteryStatusType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="OK"/>
+         <xs:enumeration value="LOW_BATTERIES"/>
+         <xs:enumeration value="VERY_LOW_BATTERIES"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="cabinetStatusType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="FREE"/>
+         <xs:enumeration value="IN_USE"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="blockModeType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="UNBLOCKED"/>
+         <xs:enumeration value="BLOCKED"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="physicalStateType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="DOOR_CLOSED"/>
+         <xs:enumeration value="INTRUSION"/>
+         <xs:enumeration value="DOOR_LEFT_OPEN"/>
+         <xs:enumeration value="DOOR_CLOSED_NOT_SECURED"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="stateType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="CARD"/>
+         <xs:enumeration value="PASSAGE"/>
+         <xs:enumeration value="FIRST_USER"/>
+         <xs:enumeration value="KEYPAD"/>
+         <xs:enumeration value="CARD_PIN"/>
+         <xs:enumeration value="DUAL_USER"/>
+         <xs:enumeration value="PIN_CARD"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="doorType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="TYPE_ZERO"/>
+         <xs:enumeration value="TYPE_CYLINDER"/>
+         <xs:enumeration value="TYPE_LOCK"/>
+         <xs:enumeration value="TYPE_READER"/>
+         <xs:enumeration value="TYPE_SAFE_MAG"/>
+         <xs:enumeration value="TYPE_CYLINDER_MEC"/>
+         <xs:enumeration value="TYPE_READER_ONLINE"/>
+         <xs:enumeration value="TYPE_ESCUTCHEON_PROX"/>
+         <xs:enumeration value="TYPE_READER_PROX_OFF"/>
+         <xs:enumeration value="TYPE_READER_PROX_ON"/>
+         <xs:enumeration value="TYPE_LOCK_DUAL"/>
+         <xs:enumeration value="TYPE_ELEVATOR"/>
+         <xs:enumeration value="TYPE_ELEVATOR_PROX"/>
+         <xs:enumeration value="TYPE_READER_DUAL"/>
+         <xs:enumeration value="TYPE_SAFE_KEYBOARD"/>
+         <xs:enumeration value="TYPE_SAFE_PROX"/>
+         <xs:enumeration value="TYPE_READER_UPDATER"/>
+         <xs:enumeration value="TYPE_ELEVATOR_DUAL"/>
+         <xs:enumeration value="TYPE_ESCUTCHEON_UOL"/>
+         <xs:enumeration value="TYPE_CABINET"/>
+         <xs:enumeration value="TYPE_READER_UOL"/>
+         <xs:enumeration value="TYPE_READER_DUAL_UOL"/>
+         <xs:enumeration value="TYPE_SPY_MAG"/>
+         <xs:enumeration value="TYPE_VISUALIZER"/>
+         <xs:enumeration value="TYPE_SPY_DUAL_UOL"/>
+         <xs:enumeration value="TYPE_SPY_MAG_UOL"/>
+         <xs:enumeration value="TYPE_READER_MAG_UOL"/>
+         <xs:enumeration value="TYPE_KNOB_CYLINDER"/>
+         <xs:enumeration value="TYPE_KNOB_CYLINDER_UOL"/>
+         <xs:enumeration value="TYPE_ENERGYSAVER_PROX"/>
+         <xs:enumeration value="TYPE_ENERGYSAVER_MAG"/>
+         <xs:enumeration value="TYPE_ENERGYSAVER_DUAL"/>
+         <xs:enumeration value="TYPE_ELEVATOR_UOL"/>
+         <xs:enumeration value="TYPE_ELEVATOR_PROX_UOL"/>
+         <xs:enumeration value="TYPE_ELEVATOR_DUAL_UOL"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="rfStatusType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="ALWAYS_AWAKE"/>
+         <xs:enumeration value="SLEEP_AWAKE"/>
+         <xs:enumeration value="ALWAYS_SLEEP"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="errorType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="ERROR_SERVICE_AUTHENTICATION"/>
+         <xs:enumeration value="ERROR_SERVICE_AUTHORIZATION"/>
+         <xs:enumeration value="ERROR_OPERATION_TIMEOUT"/>
+         <xs:enumeration value="ERROR_OPERATION_DOOR_UNKNOWN"/>
+         <xs:enumeration value="ERROR_OPERATION_HUB_UNKNOWN"/>
+         <xs:enumeration value="ERROR_OPERATION_DOOR_NOT_WIRELESS"/>
+         <xs:enumeration value="ERROR_OPERATION_MODULE_NOT_CONFIGURED"/>
+         <xs:enumeration value="ERROR_OPERATION_HUB_BUSY"/>
+         <xs:enumeration value="ERROR_OPERATION_UNKNOWN_ERROR"/>
+         <xs:enumeration value="ERROR_OPERATION_DOOR_NOT_INITIALIZED"/>
+         <xs:enumeration value="ERROR_FORMAT_ERROR"/>
+         <xs:enumeration value="ERROR_OPERATION_USER_UNKNOWN"/>
+         <xs:enumeration value="ERROR_HUB_MODULE_LIST_FULL"/>
+         <xs:enumeration value="ERROR_HUB_MODULE_ALREADY_EXISTS"/>
+         <xs:enumeration value="ERROR_HUB_MODULE_LIST_EMPTY"/>
+         <xs:enumeration value="ERROR_HUB_MODULE_NOT_IN_LIST"/>
+         <xs:enumeration value="ERROR_COMMUNICATION_MODULE_LOCK"/>
+         <xs:enumeration value="ERROR_COMMUNICATION_NO_ANSWER"/>
+         <xs:enumeration value="ERROR_COMMUNICATION_LOCK_NOT_WAKING_UP"/>
+         <xs:enumeration value="ERROR_COMMUNICATION_HUB_MODULE"/>
+         <xs:enumeration value="ERROR_COMMUNICATION_BAD_SYNTAX"/>
+         <xs:enumeration value="ERROR_COMMUNICATION_RF_1"/>
+         <xs:enumeration value="ERROR_COMMUNICATION_RF_2"/>
+         <xs:enumeration value="ERROR_COMMUNICATION_WIRELESS_MEANS_BUSY"/>
+         <xs:enumeration value="ERROR_COMMUNICATION_RF_4"/>
+         <xs:enumeration value="ERROR_COMMUNICATION_RF_COLLISION"/>
+         <xs:enumeration value="ERROR_DOOR_WRONGINIT"/>
+         <xs:enumeration value="ERROR_DOOR_WRONGSYS"/>
+         <xs:enumeration value="ERROR_DOOR_WRONGDOOR"/>
+         <xs:enumeration value="ERROR_DOOR_LOWBATT"/>
+         <xs:enumeration value="ERROR_DOOR_WRONGDIALOG"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_ROOM_OCCUPIED"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_ROOM_PREASSIGNED"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_PARENT_OCCUPIED"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_PARENT_PREASSIGNED"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_CHILD_OCCUPIED"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_CHILD_PREASSIGNED"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_INVALID_ROOM"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_INVALID_PARENT_ROOM"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_INVALID_CHILD_ROOM"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_ROOM_NOT_OCCUPIED"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_TOO_MANY_COPIES"/>
+         <xs:enumeration value="RESULT_ERROR_CHECKIN_ENCODING_TARGET_MISSING"/>
+         <xs:enumeration value="RESULT_ERROR_COPY_EMAIL_ADDRESSES_MISSING"/>
+         <xs:enumeration value="ERROR_NOT_AUTHORIZED_IN_LOCKING_PLAN"/>
+         <xs:enumeration value="ERROR_NOT_AUTHORIZED_OUT_OF_TIME"/>
+         <xs:enumeration value="ERROR_NOT_AUTHORIZED_MISSING_GRANT"/>
+         <xs:enumeration value="ERROR_NOT_AUTHORIZED_USER_INACTIVE_OR_EXPIRED"/>
+         <xs:enumeration value="ERROR_NOT_AUTHORIZED_IN_SERVER_SITE_LICENSE"/>
+         <xs:enumeration value="ERROR_NOT_AUTHORIZED_DOOR_BLOCKED"/>
+         <xs:enumeration value="ERROR_NOT_AUTHORIZED_DOOR_PRIVACY_ON"/>
+         <xs:enumeration value="ERROR_BAD_PARAMETERS"/>
+         <xs:enumeration value="ERROR_DATA_ERROR"/>
+         <xs:enumeration value="ERROR_CANNOT_DELETE_IN_USE"/>
+         <xs:enumeration value="ERROR_PCTOLOCK_FILE_INVALID"/>
+         <xs:enumeration value="ERROR_PCTOLOCK_FILE_WRONG_SITE"/>
+         <xs:enumeration value="ERROR_PCTOLOCK_DOOR_DOES_NOT_EXIST"/>
+         <xs:enumeration value="ERROR_PCTOLOCK_INITIALIZATION_TYPE_MISMATCH"/>
+         <xs:enumeration value="ERROR_ENCODING_DEVICE_NOT_ELIGIBLE"/>
+         <xs:enumeration value="ERROR_ENCODING_NO_CARD_ISSUED"/>
+         <xs:enumeration value="ERROR_ENCODING_CARD_ALREADY_ISSUED"/>
+         <xs:enumeration value="ERROR_ENCODING_ROOM_MUST_BE_CHECKED_OUT"/>
+         <xs:enumeration
+               value="ERROR_ENCODING_REMOTE_SERVER_RESPONSE_OK_NFC_EXECUTION_FAILED"/>
+         <xs:enumeration value="ERROR_ENCODING_DEVICE_MISSING"/>
+         <xs:enumeration value="ERROR_ENCODING_DEVICE_NOT_FOUND"/>
+         <xs:enumeration value="ERROR_ENCODING_READ_TIMEOUT"/>
+         <xs:enumeration value="ERROR_ENCODING_NO_COMMUNICATION"/>
+         <xs:enumeration value="ERROR_ENCODING_BUSY"/>
+         <xs:enumeration value="ERROR_ENCODING_OTHER"/>
+         <xs:enumeration value="ERROR_READING_UNKNOWN"/>
+         <xs:enumeration value="ERROR_READING_USER_DELETED"/>
+         <xs:enumeration value="ERROR_READING_SECURE_CARD"/>
+         <xs:enumeration value="ERROR_READING_DELETED_CARD"/>
+         <xs:enumeration value="ERROR_READING_CARD"/>
+         <xs:enumeration value="ERROR_READING_EMPTY"/>
+         <xs:enumeration value="ERROR_READING_FORMAT"/>
+         <xs:enumeration value="ERROR_READING_UNKNOWN_MESSAGE"/>
+         <xs:enumeration value="ERROR_READING_OTHER_SITE"/>
+         <xs:enumeration value="ERROR_READING_NON_PROPIETARY"/>
+         <xs:enumeration value="ERROR_READING_WRONG_SIZE"/>
+         <xs:enumeration value="ERROR_READING_LOST_COMM"/>
+         <xs:enumeration value="ERROR_READING_SECTOR_AUTH"/>
+         <xs:enumeration value="ERROR_READING_COULD_NOT_AUTH"/>
+         <xs:enumeration value="ERROR_ENCODING_WRITE_ERROR"/>
+         <xs:enumeration value="ERROR_READING_OLD_CARD"/>
+         <xs:enumeration value="ERROR_READING_NOT_ACTIVE"/>
+         <xs:enumeration value="ERROR_READING_EXPIRED"/>
+         <xs:enumeration value="ERROR_READING_NOT_AUTHORIZED"/>
+         <xs:enumeration value="ERROR_ROOM_FREE"/>
+         <xs:enumeration value="ERROR_ROOM_OCCUPIED"/>
+         <xs:enumeration value="ERROR_ROOM_PREASSIGNED"/>
+         <xs:enumeration value="ERROR_READING_FRAUDULENT_KEY_CARD"/>
+         <xs:enumeration value="ERROR_DESFIRE_CANNOT_SELECT_CARD"/>
+         <xs:enumeration value="ERROR_DESFIRE_CANNOT_SELECT_APPLICATION"/>
+         <xs:enumeration value="ERROR_DESFIRE_CANNOT_GET_CARD_VERSION"/>
+         <xs:enumeration value="ERROR_DESFIRE_CARD_ENCRYPTION_NOT_SUPPORTED"/>
+         <xs:enumeration value="ERROR_CARD_CANNOT_CHANGE_KEY"/>
+         <xs:enumeration value="ERROR_DESFIRE_CANNOT_GET_APP_LIST"/>
+         <xs:enumeration value="ERROR_DESFIRE_CANNOT_CREATE_APP"/>
+         <xs:enumeration value="ERROR_DESFIRE_CANNOT_DELETE_APP"/>
+         <xs:enumeration value="ERROR_DESFIRE_CANNOT_GET_FILE"/>
+         <xs:enumeration value="ERROR_DESFIRE_CANNOT_CREATE_FILE"/>
+         <xs:enumeration value="ERROR_DESFIRE_CANNOT_DELETE_FILE"/>
+         <xs:enumeration value="ERROR_CANNOT_READ_DATA"/>
+         <xs:enumeration value="ERROR_CANNOT_WRITE_DATA"/>
+         <xs:enumeration value="ERROR_CANNOT_DELETE_DATA"/>
+         <xs:enumeration value="ERROR_CANNOT_FORMAT_DATA"/>
+         <xs:enumeration value="ERROR_ICLASS_CANCELLED_DELETING"/>
+         <xs:enumeration value="ERROR_ICLASS_CANCELLED_OPERATION"/>
+         <xs:enumeration value="ERROR_ICLASS_CANCELLED_WRITING"/>
+         <xs:enumeration value="ERROR_ICLASS_INVALID_CONFIGURATION"/>
+         <xs:enumeration value="ERROR_ICLASS_INVALID_CARD_TYPE"/>
+         <xs:enumeration value="ERROR_ICLASS_INVALID_FACILITY_CODE"/>
+         <xs:enumeration value="ERROR_SERVER_CANNOT_CONNECT"/>
+         <xs:enumeration value="ERROR_SERVER_RESPONSE_SITE_BLOCKED"/>
+         <xs:enumeration value="ERROR_SERVER_RESPONSE_OTHER"/>
+         <xs:enumeration value="ERROR_SERVICE_SITE_INTERNAL_ERROR"/>
+         <xs:enumeration value="ERROR_OPERATION_LOCKDOWN_IN_PROGRESS"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="resultType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="RESULT_OK"/>
+         <xs:enumeration value="RESULT_ERROR"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="warningType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="WARNING_RF_LOW_SIGNAL"/>
+         <xs:enumeration value="WARNING_DOOR_WAS_ALREADY_OPEN"/>
+         <xs:enumeration value="WARNING_HUB_RF_VERSION_ERROR_VALUE"/>
+         <xs:enumeration value="WARNING_DOOR_MODULE_COMMUNICATION_ERROR"/>
+         <xs:enumeration value="WARNING_HUB_MORE_DOORS_ACCESSIBLE"/>
+         <xs:enumeration value="WARNING_HUB_BOOT_MODE"/>
+         <xs:enumeration value="WARNING_HUB_INCOMPLETE_BOOT_MODE"/>
+         <xs:enumeration value="WARNING_RF_BOOT_MODE"/>
+         <xs:enumeration value="WARNING_RF_INCOMPLETE_BOOT_MODE"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="lockdownMode">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="LOCKDOWN_OFF"/>
+         <xs:enumeration value="LOCKDOWN_OPEN"/>
+         <xs:enumeration value="LOCKDOWN_CLOSE"/>
+         <xs:enumeration value="LOCKDOWN_BLOCK"/>
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema>
