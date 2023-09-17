@@ -17,12 +17,14 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.Locale;
 
 @Slf4j
 @SpringBootApplication
+@EnableAsync
 @EnableScheduling
 @PropertySource(value = {"file:${propertiesLocation:app.properties}"}, encoding = "UTF-8")
 public class JavaFxApp extends Application {

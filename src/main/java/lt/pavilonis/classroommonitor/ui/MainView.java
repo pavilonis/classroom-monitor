@@ -54,14 +54,17 @@ public final class MainView extends BorderPane {
       setPadding(new Insets(36, 20, 20, 20));
    }
 
-   public void regularUpdate(List<ClassroomOccupancy> items) {
-      items = items.stream()
+   public void update(List<ClassroomOccupancy> items) {
+      List<ClassroomOccupancy> sortedItems = items.stream()
             .sorted(comparing(ClassroomOccupancy::getName))
             .collect(toList());
 
       for (int i = 0; i < GRID_SIZE; i++) {
          ClassroomNode node = nodes.get(i);
-         ClassroomOccupancy item = i < items.size() ? items.get(i) : null;
+
+         ClassroomOccupancy item = i < sortedItems.size()
+               ? sortedItems.get(i)
+               : null;
 
          updateNode(node, item);
       }
@@ -106,7 +109,7 @@ public final class MainView extends BorderPane {
    }
 
    private List<ClassroomNode> initEmptyNodes() {
-      ArrayList<ClassroomNode> result = new ArrayList<>(GRID_SIZE);
+      List<ClassroomNode> result = new ArrayList<>(GRID_SIZE);
       for (int i = 0; i < GRID_SIZE; i++) {
          result.add(new ClassroomNode());
       }
@@ -150,11 +153,14 @@ public final class MainView extends BorderPane {
    }
 
    public void clearWarnings() {
-      getElements().removeIf(child -> child instanceof WarningBox);
+      List<Node> elements = getElements();
+      if (!elements.isEmpty()) {
+         elements.removeIf(child -> child instanceof WarningBox);
+      }
    }
 
    private List<Node> getElements() {
       StackPane rootPane = (StackPane) getParent();
-      return rootPane.getChildren();
+      return rootPane == null ? List.of() : rootPane.getChildren();
    }
 }

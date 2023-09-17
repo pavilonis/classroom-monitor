@@ -28,8 +28,10 @@ public class Footer extends HBox {
       setAlignment(Pos.CENTER_LEFT);
    }
 
-   public void updateProgressValue(double progress) {
+   public void updateProgressValue(double progress, boolean working) {
+      String style = working ? "-fx-accent: rgba(255, 0, 0, .66);" : "-fx-accent: rgba(0, 255, 0, .66);";
       progressBar.setProgress(progress);
+      progressBar.setStyle(style);
    }
 
    private Label createVersionLabel(BuildProperties buildProperties, MessageSource messages) {
