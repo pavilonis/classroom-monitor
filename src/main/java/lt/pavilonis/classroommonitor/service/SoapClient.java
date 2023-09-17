@@ -1,5 +1,6 @@
 package lt.pavilonis.classroommonitor.service;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lt.pavilonis.classroommonitor.generated.StateType;
 import lt.pavilonis.classroommonitor.generated.WirelessDoor;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import static lt.pavilonis.classroommonitor.util.NumberUtils.extractNumber;
 
@@ -38,18 +40,30 @@ public class SoapClient {
       this.doorsService = doorsService;
    }
 
-   public List<ClassroomOccupancy> fetchDoors() {
+   public List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressMonitor) {
       if (testMode) {
-         return new TestDataProvider().load();
+         return loadTestData(progressMonitor);
       }
 
       var start = LocalDateTime.now();
-      List<WirelessDoor> doors = requestDoorList();
-      updateDoors(doors);
+      triggerDoorsStatusUpdate(progressMonitor);
 
       List<ClassroomOccupancy> result = fetchUpdatedDoors();
+      progressMonitor.accept(1d);
       log.info("Request completed [entries={}, t={}]", result.size(), TimeUtils.duration(start));
       return result;
+   }
+
+   @SneakyThrows
+   private List<ClassroomOccupancy> loadTestData(Consumer<Double> progressMonitor) {
+      int testDataFetchSteps = 20;
+      for (int i = 1; i <= testDataFetchSteps; i++) {
+         double progress = i / (double) testDataFetchSteps;
+         log.info("Test data progress: {}", progress);
+         progressMonitor.accept(progress);
+         Thread.sleep(2_000L);
+      }
+      return new TestDataProvider().load();
    }
 
    private List<WirelessDoor> requestDoorList() {
@@ -71,7 +85,9 @@ public class SoapClient {
       return result;
    }
 
-   private void updateDoors(List<WirelessDoor> doors) {
+   private void triggerDoorsStatusUpdate(Consumer<Double> progressMonitor) {
+      List<WirelessDoor> doors = requestDoorList();
+
       LocalDateTime start = LocalDateTime.now();
       int counter = 1;
       int successCounter = 0;
@@ -82,9 +98,12 @@ public class SoapClient {
             successCounter++;
             log.info("{}/{} door {} updated in {}",
                   counter++, doors.size(), door.getDoorName(), TimeUtils.duration(doorUpdateStart));
-//            Thread.sleep(100);
+
          } catch (Exception e) {
             log.error("Could not update door {}", door.getDoorName(), e);
+
+         } finally {
+            progressMonitor.accept(counter / (double) doors.size() * 0.9);
          }
       }
       log.info("Updated {}/{} doors in {}", successCounter, doors.size(), TimeUtils.duration(start));

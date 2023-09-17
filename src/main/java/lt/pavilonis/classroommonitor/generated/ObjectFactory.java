@@ -1,25 +1,25 @@
 
 package lt.pavilonis.classroommonitor.generated;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementDecl;
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementDecl;
+import jakarta.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the lt.pavilonis.classroommonitor.generated package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the lt.pavilonis.classroommonitor.generated package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -67,14 +67,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: lt.pavilonis.classroommonitor.generated
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link CabinetStateInfo }
-     * 
+     *
      */
     public CabinetStateInfo createCabinetStateInfo() {
         return new CabinetStateInfo();
@@ -82,7 +82,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorBlock }
-     * 
+     *
      */
     public DoorBlock createDoorBlock() {
         return new DoorBlock();
@@ -90,7 +90,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorBlockResponse }
-     * 
+     *
      */
     public DoorBlockResponse createDoorBlockResponse() {
         return new DoorBlockResponse();
@@ -98,7 +98,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorClose }
-     * 
+     *
      */
     public DoorClose createDoorClose() {
         return new DoorClose();
@@ -106,7 +106,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorCloseResponse }
-     * 
+     *
      */
     public DoorCloseResponse createDoorCloseResponse() {
         return new DoorCloseResponse();
@@ -114,7 +114,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorDiagnostic }
-     * 
+     *
      */
     public DoorDiagnostic createDoorDiagnostic() {
         return new DoorDiagnostic();
@@ -122,7 +122,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorDiagnosticResponse }
-     * 
+     *
      */
     public DoorDiagnosticResponse createDoorDiagnosticResponse() {
         return new DoorDiagnosticResponse();
@@ -130,7 +130,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorGetAll }
-     * 
+     *
      */
     public DoorGetAll createDoorGetAll() {
         return new DoorGetAll();
@@ -138,7 +138,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorGetAllByLockdownArea }
-     * 
+     *
      */
     public DoorGetAllByLockdownArea createDoorGetAllByLockdownArea() {
         return new DoorGetAllByLockdownArea();
@@ -146,7 +146,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorGetAllByLockdownAreaResponse }
-     * 
+     *
      */
     public DoorGetAllByLockdownAreaResponse createDoorGetAllByLockdownAreaResponse() {
         return new DoorGetAllByLockdownAreaResponse();
@@ -154,7 +154,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorGetAllResponse }
-     * 
+     *
      */
     public DoorGetAllResponse createDoorGetAllResponse() {
         return new DoorGetAllResponse();
@@ -162,7 +162,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorGetInfo }
-     * 
+     *
      */
     public DoorGetInfo createDoorGetInfo() {
         return new DoorGetInfo();
@@ -170,7 +170,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorGetInfoResponse }
-     * 
+     *
      */
     public DoorGetInfoResponse createDoorGetInfoResponse() {
         return new DoorGetInfoResponse();
@@ -178,7 +178,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorOpen }
-     * 
+     *
      */
     public DoorOpen createDoorOpen() {
         return new DoorOpen();
@@ -186,7 +186,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorOpenResponse }
-     * 
+     *
      */
     public DoorOpenResponse createDoorOpenResponse() {
         return new DoorOpenResponse();
@@ -194,7 +194,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorPassage }
-     * 
+     *
      */
     public DoorPassage createDoorPassage() {
         return new DoorPassage();
@@ -202,7 +202,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorPassageResponse }
-     * 
+     *
      */
     public DoorPassageResponse createDoorPassageResponse() {
         return new DoorPassageResponse();
@@ -210,7 +210,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorRetrieveOpenings }
-     * 
+     *
      */
     public DoorRetrieveOpenings createDoorRetrieveOpenings() {
         return new DoorRetrieveOpenings();
@@ -218,7 +218,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorRetrieveOpeningsResponse }
-     * 
+     *
      */
     public DoorRetrieveOpeningsResponse createDoorRetrieveOpeningsResponse() {
         return new DoorRetrieveOpeningsResponse();
@@ -226,7 +226,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorSetTime }
-     * 
+     *
      */
     public DoorSetTime createDoorSetTime() {
         return new DoorSetTime();
@@ -234,7 +234,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorSetTimeResponse }
-     * 
+     *
      */
     public DoorSetTimeResponse createDoorSetTimeResponse() {
         return new DoorSetTimeResponse();
@@ -242,7 +242,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorStateInfo }
-     * 
+     *
      */
     public DoorStateInfo createDoorStateInfo() {
         return new DoorStateInfo();
@@ -250,7 +250,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorUnblock }
-     * 
+     *
      */
     public DoorUnblock createDoorUnblock() {
         return new DoorUnblock();
@@ -258,7 +258,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorUnblockResponse }
-     * 
+     *
      */
     public DoorUnblockResponse createDoorUnblockResponse() {
         return new DoorUnblockResponse();
@@ -266,7 +266,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorUpdate }
-     * 
+     *
      */
     public DoorUpdate createDoorUpdate() {
         return new DoorUpdate();
@@ -274,7 +274,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoorUpdateResponse }
-     * 
+     *
      */
     public DoorUpdateResponse createDoorUpdateResponse() {
         return new DoorUpdateResponse();
@@ -282,7 +282,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetVersion }
-     * 
+     *
      */
     public GetVersion createGetVersion() {
         return new GetVersion();
@@ -290,7 +290,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetVersionResponse }
-     * 
+     *
      */
     public GetVersionResponse createGetVersionResponse() {
         return new GetVersionResponse();
@@ -298,7 +298,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LockdownRequest }
-     * 
+     *
      */
     public LockdownRequest createLockdownRequest() {
         return new LockdownRequest();
@@ -306,7 +306,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OperationResult }
-     * 
+     *
      */
     public OperationResult createOperationResult() {
         return new OperationResult();
@@ -314,7 +314,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RfModuleInfo }
-     * 
+     *
      */
     public RfModuleInfo createRfModuleInfo() {
         return new RfModuleInfo();
@@ -322,7 +322,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SiteLockDown }
-     * 
+     *
      */
     public SiteLockDown createSiteLockDown() {
         return new SiteLockDown();
@@ -330,7 +330,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SiteLockDownResponse }
-     * 
+     *
      */
     public SiteLockDownResponse createSiteLockDownResponse() {
         return new SiteLockDownResponse();
@@ -338,7 +338,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SystemInfo }
-     * 
+     *
      */
     public SystemInfo createSystemInfo() {
         return new SystemInfo();
@@ -346,7 +346,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WirelessDoor }
-     * 
+     *
      */
     public WirelessDoor createWirelessDoor() {
         return new WirelessDoor();
@@ -354,7 +354,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WirelessDoorListLockDownAreas }
-     * 
+     *
      */
     public WirelessDoorListLockDownAreas createWirelessDoorListLockDownAreas() {
         return new WirelessDoorListLockDownAreas();
@@ -362,7 +362,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WirelessResult }
-     * 
+     *
      */
     public WirelessResult createWirelessResult() {
         return new WirelessResult();
@@ -370,7 +370,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WirelessResultDoorList }
-     * 
+     *
      */
     public WirelessResultDoorList createWirelessResultDoorList() {
         return new WirelessResultDoorList();
@@ -378,7 +378,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WirelessResultDoorListLockdownAreas }
-     * 
+     *
      */
     public WirelessResultDoorListLockdownAreas createWirelessResultDoorListLockdownAreas() {
         return new WirelessResultDoorListLockdownAreas();
@@ -386,7 +386,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WirelessResultRFModuleInfo }
-     * 
+     *
      */
     public WirelessResultRFModuleInfo createWirelessResultRFModuleInfo() {
         return new WirelessResultRFModuleInfo();
@@ -394,7 +394,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CabinetStateInfo }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -407,7 +407,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorBlock }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -420,7 +420,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorBlockResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -433,7 +433,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorClose }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -446,7 +446,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorCloseResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -459,7 +459,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorDiagnostic }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -472,7 +472,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorDiagnosticResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -485,7 +485,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorGetAll }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -498,7 +498,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorGetAllByLockdownArea }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -511,7 +511,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorGetAllByLockdownAreaResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -524,7 +524,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorGetAllResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -537,7 +537,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorGetInfo }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -550,7 +550,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorGetInfoResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -563,7 +563,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorOpen }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -576,7 +576,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorOpenResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -589,7 +589,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorPassage }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -602,7 +602,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorPassageResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -615,7 +615,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorRetrieveOpenings }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -628,7 +628,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorRetrieveOpeningsResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -641,7 +641,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorSetTime }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -654,7 +654,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorSetTimeResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -667,7 +667,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorStateInfo }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -680,7 +680,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorUnblock }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -693,7 +693,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorUnblockResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -706,7 +706,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorUpdate }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -719,7 +719,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DoorUpdateResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -732,7 +732,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetVersion }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -745,7 +745,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetVersionResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -758,7 +758,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LockdownRequest }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -771,7 +771,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OperationResult }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -784,7 +784,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RfModuleInfo }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -797,7 +797,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SiteLockDown }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -810,7 +810,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SiteLockDownResponse }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -823,7 +823,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SystemInfo }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -836,7 +836,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WirelessDoor }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -849,7 +849,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WirelessDoorListLockDownAreas }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -862,7 +862,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WirelessResult }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -875,7 +875,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WirelessResultDoorList }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -888,7 +888,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WirelessResultDoorListLockdownAreas }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return
@@ -901,7 +901,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WirelessResultRFModuleInfo }{@code >}
-     * 
+     *
      * @param value
      *     Java instance representing xml element's value.
      * @return

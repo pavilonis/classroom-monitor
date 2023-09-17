@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import lt.pavilonis.classroommonitor.ui.Footer;
 import lt.pavilonis.classroommonitor.ui.MainView;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -20,48 +19,53 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class PeriodicalRunner {
 
+   private static final double INITIAL_PROGRESS_PERCENT = 0.15;
    private final SoapClient soapClient;
    private final MainView view;
    private final Footer footer;
-   private Instant updateStartTime;
-   private boolean busy;
+   private Instant updateFinished = Instant.now();
 
    @Value("${api.request.interval}")
-   private int dataUpdateInterval;
+   private int updateDelay;
 
-   @Async
-   @Scheduled(fixedRateString = "${api.request.interval}", timeUnit = TimeUnit.SECONDS)
+   @Scheduled(fixedDelayString = "${api.request.interval}", timeUnit = TimeUnit.SECONDS)
    public void updateData() {
-      if (busy) {
+      if (updateFinished == null) {
+         // This "if" should never be true
          log.debug("Skipping update: busy");
          return;
       }
 
-      busy = true;
-      updateStartTime = Instant.now();
+      updateFinished = null;
+      log.info("Data fetch: STARTING");
+      footer.updateProgress(INITIAL_PROGRESS_PERCENT, true);
       Platform.runLater(view::clearWarnings);
 
       try {
-         List<ClassroomOccupancy> doors = soapClient.fetchDoors();
+         List<ClassroomOccupancy> doors = soapClient.fetchDoors(
+               progress -> footer.updateProgress(progress, true));
+
          Platform.runLater(() -> view.update(doors));
 
       } catch (Exception e) {
          Platform.runLater(() -> view.displayWarning(e));
 
       } finally {
-         busy = false;
+         updateFinished = Instant.now();
+         log.info("Data fetch: FINISHED");
       }
    }
 
    @Scheduled(fixedRate = 100)
-   public void updateProgressBar() {
-      if (updateStartTime == null) {
+   public void updatePauseProgress() {
+      final Instant lastUpdate = updateFinished;
+      if (lastUpdate == null) {
          return;
       }
 
-      long millisDiff = Duration.between(updateStartTime, Instant.now()).toMillis();
-      int updateIntervalMillis = dataUpdateInterval * 1_000;
-      double progress = millisDiff / (double) updateIntervalMillis;
-      footer.updateProgressValue(progress, busy);
+      long millisDiff = Duration.between(lastUpdate, Instant.now()).toMillis();
+      int updateDelayMillis = updateDelay * 1_000;
+      double progress = millisDiff / (double) updateDelayMillis;
+      footer.updateProgress(progress, false);
    }
 }
