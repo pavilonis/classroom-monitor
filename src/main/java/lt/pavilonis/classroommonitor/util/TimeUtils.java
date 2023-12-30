@@ -1,13 +1,15 @@
-package lt.pavilonis.classroommonitor.service;
+package lt.pavilonis.classroommonitor.util;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-final class TimeUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class TimeUtils {
 
-   private TimeUtils() {/**/}
-
-   static String duration(LocalDateTime start) {
+   public static String duration(LocalDateTime start) {
       LocalDateTime now = LocalDateTime.now();
       long days = start.until(now, ChronoUnit.DAYS);
       start = start.plusDays(days);

@@ -3,6 +3,7 @@ package lt.pavilonis.classroommonitor.service;
 import javafx.application.Platform;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lt.pavilonis.classroommonitor.dto.ClassroomOccupancy;
 import lt.pavilonis.classroommonitor.ui.Footer;
 import lt.pavilonis.classroommonitor.ui.MainView;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class PeriodicalRunner {
 
    private static final double INITIAL_PROGRESS_PERCENT = 0.15;
-   private final SoapClient soapClient;
+   private final DoorsService doorsService;
    private final MainView view;
    private final Footer footer;
    private Instant updateFinished = Instant.now();
@@ -37,12 +38,12 @@ public class PeriodicalRunner {
       }
 
       updateFinished = null;
-      log.info("Data fetch: STARTING");
+      log.info("Periodic door fetch: STARTING");
       footer.updateProgress(INITIAL_PROGRESS_PERCENT, true);
       Platform.runLater(view::clearWarnings);
 
       try {
-         List<ClassroomOccupancy> doors = soapClient.fetchDoors(
+         List<ClassroomOccupancy> doors = doorsService.fetchDoors(
                progress -> footer.updateProgress(progress, true));
 
          Platform.runLater(() -> view.update(doors));
@@ -52,7 +53,7 @@ public class PeriodicalRunner {
 
       } finally {
          updateFinished = Instant.now();
-         log.info("Data fetch: FINISHED");
+         log.info("Periodic door fetch: FINISHED");
       }
    }
 

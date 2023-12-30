@@ -7,7 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
-import lt.pavilonis.classroommonitor.service.ClassroomOccupancy;
+import lt.pavilonis.classroommonitor.dto.ClassroomOccupancy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;

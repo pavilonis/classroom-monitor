@@ -1,12 +1,14 @@
 package lt.pavilonis.classroommonitor.service;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lt.pavilonis.classroommonitor.dto.ClassroomOccupancy;
 import lt.pavilonis.classroommonitor.generated.StateType;
 import lt.pavilonis.classroommonitor.generated.WirelessDoor;
 import lt.pavilonis.classroommonitor.generated.WirelessDoorsService;
 import lt.pavilonis.classroommonitor.generated.WirelessResultDoorList;
+import lt.pavilonis.classroommonitor.util.TimeUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,34 +21,28 @@ import java.util.function.Consumer;
 import static lt.pavilonis.classroommonitor.util.NumberUtils.extractNumber;
 
 @Slf4j
+@ConditionalOnProperty(value = "api.test-mode", havingValue = "false")
 @Service
-public class SoapClient {
+public class SoapDoorsService implements DoorsService {
 
    private final Map<String, LocalDateTime> occupancyStartTimes = new ConcurrentHashMap<>();
    private final String username;
    private final String password;
-   private final boolean testMode;
-   private final WirelessDoorsService doorsService;
+   private final WirelessDoorsService soapService;
 
-   public SoapClient(@Value("${api.test-mode}") boolean testMode,
-                     @Value("${soap.username}") String username,
-                     @Value("${soap.password}") String password,
-                     WirelessDoorsService doorsService) {
-
-      log.info("Test mode enabled: {}", testMode);
+   public SoapDoorsService(@Value("${soap.username}") String username,
+                           @Value("${soap.password}") String password,
+                           WirelessDoorsService soapService) {
       this.username = username;
       this.password = password;
-      this.testMode = testMode;
-      this.doorsService = doorsService;
+      this.soapService = soapService;
+      log.info("Using {}", this.getClass().getSimpleName());
    }
 
+   @Override
    public List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressMonitor) {
-      if (testMode) {
-         return loadTestData(progressMonitor);
-      }
-
       var start = LocalDateTime.now();
-      triggerDoorsStatusUpdate(progressMonitor);
+      updateDoorStatuses(progressMonitor);
 
       List<ClassroomOccupancy> result = fetchUpdatedDoors();
       progressMonitor.accept(1d);
@@ -54,39 +50,36 @@ public class SoapClient {
       return result;
    }
 
-   @SneakyThrows
-   private List<ClassroomOccupancy> loadTestData(Consumer<Double> progressMonitor) {
-      int testDataFetchSteps = 20;
-      for (int i = 1; i <= testDataFetchSteps; i++) {
-         double progress = i / (double) testDataFetchSteps;
-         log.info("Test data progress: {}", progress);
-         progressMonitor.accept(progress);
-         Thread.sleep(2_000L);
-      }
-      return new TestDataProvider().load();
-   }
-
-   private List<WirelessDoor> requestDoorList() {
+   private List<WirelessDoor> fetchDoors() {
       LocalDateTime start = LocalDateTime.now();
-      WirelessResultDoorList doorList = doorsService.doorGetAll(username, password);
+      WirelessResultDoorList doorList = soapService.doorGetAll(username, password);
       List<WirelessDoor> doors = doorList.getWirelessDoor();
-      log.info("Door list ({}) received in {}", doors.size(), TimeUtils.duration(start));
+
+      if (doors.isEmpty()) {
+         log.warn("Received empty doors response in {}. " +
+               "This can happen because of incorrect service username/password", TimeUtils.duration(start));
+      } else  {
+         log.info("Received {} doors in {}", doors.size(), TimeUtils.duration(start));
+      }
       return doors;
    }
 
    private List<ClassroomOccupancy> fetchUpdatedDoors() {
+      log.info("Fetching updated doors");
       List<ClassroomOccupancy> result = new ArrayList<>();
-      List<WirelessDoor> updatedDoors = requestDoorList();
+      List<WirelessDoor> updatedDoors = fetchDoors();
 
       for (WirelessDoor door : updatedDoors) {
          ClassroomOccupancy occupancy = createClassroomOccupancy(door);
          result.add(occupancy);
       }
+      log.info("Updated doors fetching: FINISHED");
       return result;
    }
 
-   private void triggerDoorsStatusUpdate(Consumer<Double> progressMonitor) {
-      List<WirelessDoor> doors = requestDoorList();
+   private void updateDoorStatuses(Consumer<Double> progressMonitor) {
+      log.info("Starting doors status update");
+      List<WirelessDoor> doors = fetchDoors();
 
       LocalDateTime start = LocalDateTime.now();
       int counter = 1;
@@ -94,7 +87,7 @@ public class SoapClient {
       for (WirelessDoor door : doors) {
          try {
             LocalDateTime doorUpdateStart = LocalDateTime.now();
-            doorsService.doorUpdate(username, password, door.getDoorId(), door.getDoorName());
+            soapService.doorUpdate(username, password, door.getDoorId(), door.getDoorName());
             successCounter++;
             log.info("{}/{} door {} updated in {}",
                   counter++, doors.size(), door.getDoorName(), TimeUtils.duration(doorUpdateStart));

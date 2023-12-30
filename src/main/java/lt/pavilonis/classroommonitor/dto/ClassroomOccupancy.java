@@ -1,4 +1,4 @@
-package lt.pavilonis.classroommonitor.service;
+package lt.pavilonis.classroommonitor.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
