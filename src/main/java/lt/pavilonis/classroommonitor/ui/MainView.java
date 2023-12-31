@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static lt.pavilonis.classroommonitor.util.LabelUtils.createLabel;
 
 @Component
@@ -39,11 +38,14 @@ public final class MainView extends BorderPane {
    private final String messageOccupied;
    private final String messageFree;
    private final int titleSize;
+   private final int classroomLimit;
 
    public MainView(MessageSource messages, Footer footer, Header header,
-                   @Value("${font.size.title}") int titleSize) {
+                   @Value("${font.size.title}") int titleSize,
+                   @Value("${screen.classrooms.limit}") int classroomLimit) {
 
       this.titleSize = titleSize;
+      this.classroomLimit = classroomLimit;
       this.messageOccupied = messages.getMessage("MainView.occupied", null, null);
       this.messageFree = messages.getMessage("MainView.free", null, null);
 
@@ -57,7 +59,8 @@ public final class MainView extends BorderPane {
    public void update(List<ClassroomOccupancy> items) {
       List<ClassroomOccupancy> sortedItems = items.stream()
             .sorted(comparing(ClassroomOccupancy::getName))
-            .collect(toList());
+            .limit(classroomLimit)
+            .toList();
 
       for (int i = 0; i < GRID_SIZE; i++) {
          ClassroomNode node = nodes.get(i);

@@ -1,7 +1,8 @@
-api.test-mode=false
-api.request.interval=5000
-font.size.title=94
-header.text=Test Header Text
+api.test-mode=true
+api.request.interval=30
+screen.font.size.title=88
+screen.classrooms.limit=55
+screen.header.text=Test Header Text
 
 soap.endpoint.url=https://localhost
 soap.username=aaa

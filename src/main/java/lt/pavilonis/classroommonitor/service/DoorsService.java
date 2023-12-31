@@ -7,6 +7,6 @@ import java.util.function.Consumer;
 
 public interface DoorsService {
 
-   List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressMonitor);
+   List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressConsumer);
 
 }

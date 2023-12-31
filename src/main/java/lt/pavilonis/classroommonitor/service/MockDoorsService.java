@@ -17,8 +17,6 @@ import java.util.Random;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.toList;
-
 @Slf4j
 @ConditionalOnProperty(value = "api.test-mode", havingValue = "true")
 @Service
@@ -32,22 +30,22 @@ public class MockDoorsService implements DoorsService {
 
    @SneakyThrows
    @Override
-   public List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressMonitor) {
-      delay(progressMonitor);
+   public List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressConsumer) {
+      delay(progressConsumer);
 
       return IntStream.range(0, MainView.GRID_SIZE)
             .map(i -> randomInt(100, 200))
             .mapToObj(String::valueOf)
             .map(number -> new ClassroomOccupancy(number, randomBoolean(), randomLocalDateTime()))
-            .collect(toList());
+            .toList();
    }
 
-   private void delay(Consumer<Double> progressMonitor) throws InterruptedException {
+   private void delay(Consumer<Double> progressConsumer) throws InterruptedException {
       int testDataFetchSteps = 20;
       for (int i = 1; i <= testDataFetchSteps; i++) {
          double progress = i / (double) testDataFetchSteps;
          log.info("Test data progress: {}", progress);
-         progressMonitor.accept(progress);
+         progressConsumer.accept(progress);
          Thread.sleep(1_000L);
       }
    }

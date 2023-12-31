@@ -12,8 +12,8 @@ import static lt.pavilonis.classroommonitor.util.LabelUtils.createLabel;
 @Component
 public final class Header extends HBox {
 
-   public Header(@Value("${header.text}") String headerText,
-                 @Value("${font.size.title}") int headerSize) {
+   public Header(@Value("${screen.header.text}") String headerText,
+                 @Value("${screen.font.size.title}") int headerSize) {
 
       setAlignment(Pos.CENTER);
       setPadding(new Insets(0, 0, 36, 0));

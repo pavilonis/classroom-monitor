@@ -40,12 +40,12 @@ public class SoapDoorsService implements DoorsService {
    }
 
    @Override
-   public List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressMonitor) {
+   public List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressConsumer) {
       var start = LocalDateTime.now();
-      updateDoorStatuses(progressMonitor);
+      updateDoorStatuses(progressConsumer);
 
       List<ClassroomOccupancy> result = fetchUpdatedDoors();
-      progressMonitor.accept(1d);
+      progressConsumer.accept(1d);
       log.info("Request completed [entries={}, t={}]", result.size(), TimeUtils.duration(start));
       return result;
    }
