@@ -1,7 +1,6 @@
 api.test-mode=true
 api.request.interval=30
-screen.font.size.title=88
-screen.classrooms.limit=55
+screen.classrooms.limit=21
 screen.header.text=Test Header Text
 
 soap.endpoint.url=https://localhost

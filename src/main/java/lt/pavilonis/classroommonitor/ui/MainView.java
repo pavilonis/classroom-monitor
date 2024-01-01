@@ -1,13 +1,24 @@
 package lt.pavilonis.classroommonitor.ui;
 
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import lombok.extern.slf4j.Slf4j;
 import lt.pavilonis.classroommonitor.dto.ClassroomOccupancy;
+import lt.pavilonis.classroommonitor.service.GridComposerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -16,7 +27,6 @@ import org.springframework.web.client.ResourceAccessException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Comparator.comparing;
@@ -26,81 +36,108 @@ import static lt.pavilonis.classroommonitor.util.LabelUtils.createLabel;
 @Slf4j
 public final class MainView extends BorderPane {
 
-   static final int FONT_SIZE_SMALL = 56;
+   private static final double CONTENT_TO_PADDING_RATIO = 0.9;
+   private static final double CONTENT_VERTICAL_RATIO = 0.89;
+   private static final double GAP_TO_NODE_WIDTH_RATIO = 0.08;
+   private static final double FONT_TO_NODE_WIDTH_RATIO = 0.35;
+   private static final double FONT_SMALL_TO_NODE_WIDTH_RATIO = 0.25;
+   private static final Color RED = Color.web("rgba(255, 0, 0, .66)", 1);
+   private static final Color GREEN = Color.web("rgba(0, 255, 0, .66)", 1);
    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
-   private static final String STYLE_BASE = "-fx-border-color: black; -fx-border-width:4px;" +
-         " -fx-border-radius: 30px; -fx-background-radius: 30px; ";
-   private static final String STYLE_RED = "-fx-background-color: rgba(255, 0, 0, .66)";
-   private static final String STYLE_GREEN = "-fx-background-color: rgba(0, 255, 0, .66)";
-   public static final int GRID_SIZE = 24;
-   private static final int GRID_COLUMNS = 8;
-   private final List<ClassroomNode> nodes = initEmptyNodes();
+
    private final String messageOccupied;
    private final String messageFree;
-   private final int titleSize;
    private final int classroomLimit;
 
    public MainView(MessageSource messages, Footer footer, Header header,
-                   @Value("${font.size.title}") int titleSize,
                    @Value("${screen.classrooms.limit}") int classroomLimit) {
 
-      this.titleSize = titleSize;
       this.classroomLimit = classroomLimit;
       this.messageOccupied = messages.getMessage("MainView.occupied", null, null);
       this.messageFree = messages.getMessage("MainView.free", null, null);
 
       setTop(header);
-      setCenter(createGrid(nodes));
       setBottom(footer);
-
-      setPadding(new Insets(36, 20, 20, 20));
+//      setPadding(new Insets(36, 20, 20, 20));
    }
 
    public void update(List<ClassroomOccupancy> items) {
-      List<ClassroomOccupancy> sortedItems = items.stream()
+
+      List<ClassroomOccupancy> displayItems = items.stream()
             .sorted(comparing(ClassroomOccupancy::getName))
             .limit(classroomLimit)
             .toList();
 
-      for (int i = 0; i < GRID_SIZE; i++) {
-         ClassroomNode node = nodes.get(i);
-
-         ClassroomOccupancy item = i < sortedItems.size()
-               ? sortedItems.get(i)
-               : null;
-
-         updateNode(node, item);
+      if (displayItems.size() < items.size()) {
+         log.warn("Displaying only {}/{} classes because of configured limit", displayItems.size(), items.size());
       }
+
+      Rectangle2D bounds = Screen.getPrimary().getBounds();
+      double screenWidth = bounds.getWidth();
+
+      List<List<Integer>> gridModel =
+            GridComposerService.createGrid(screenWidth, bounds.getHeight() * CONTENT_VERTICAL_RATIO, displayItems.size());
+
+      int longestRowSize = gridModel.stream()
+            .mapToInt(List::size)
+            .max()
+            .orElseThrow();
+
+      int itemIndex = 0;
+
+      double nodeWidth = screenWidth / longestRowSize * CONTENT_TO_PADDING_RATIO;
+
+      GridPane grid = new GridPane();
+      double gap = nodeWidth * GAP_TO_NODE_WIDTH_RATIO;
+      grid.setHgap(gap);
+      grid.setVgap(gap);
+      grid.setAlignment(Pos.CENTER);
+
+      for (int rowIndex = 0; rowIndex < gridModel.size(); rowIndex++) {
+         List<Integer> row = gridModel.get(rowIndex);
+
+         for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+            ClassroomOccupancy classroomOccupancy = displayItems.get(itemIndex++);
+            ClassroomNode node = createNode(classroomOccupancy, nodeWidth);
+            grid.add(node, columnIndex, rowIndex);
+         }
+      }
+
+      setCenter(grid);
    }
 
-   private void updateNode(ClassroomNode boxNode, ClassroomOccupancy classroom) {
+   private ClassroomNode createNode(ClassroomOccupancy classroom, double nodeWidth) {
+      ClassroomNode boxNode = new ClassroomNode(nodeWidth);
       ObservableList<Node> contents = boxNode.getChildren();
       contents.clear();
 
-      if (classroom == null) {
-         boxNode.setStyle("-fx-background-color: #fafafa");
-         return;
-      }
+      double fontSize = nodeWidth * FONT_TO_NODE_WIDTH_RATIO;
+      double fontSizeSmall = nodeWidth * FONT_SMALL_TO_NODE_WIDTH_RATIO;
 
-      Node labelClassroomNumber = createLabel(formatString(classroom), titleSize);
+      Node labelClassroomNumber = createLabel(formatString(classroom), fontSize);
+      var radius = new CornerRadii(nodeWidth * 0.13);
+      var stroke = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, radius, new BorderWidths(nodeWidth * 0.018));
+      boxNode.setBorder(new Border(stroke));
 
       if (classroom.isOccupied()) {
-         boxNode.setStyle(STYLE_BASE + STYLE_RED);
+         boxNode.setBackground(new Background(new BackgroundFill(RED, radius, null)));
 
          LocalDateTime occupancyPeriodStart = classroom.getDateTime();
          String time = TIME_FORMAT.format(occupancyPeriodStart);
 
-         Node labelTime = createLabel(time, FONT_SIZE_SMALL);
-         Node labelState = createLabel(messageOccupied, FONT_SIZE_SMALL);
+         Node labelTime = createLabel(time, fontSizeSmall);
+         Node labelState = createLabel(messageOccupied, fontSizeSmall);
 
          contents.addAll(labelTime, labelClassroomNumber, labelState);
 
       } else {
-         boxNode.setStyle(STYLE_BASE + STYLE_GREEN);
+         boxNode.setBackground(new Background(new BackgroundFill(GREEN, radius, null)));
 
-         Node labelState = createLabel(messageFree, FONT_SIZE_SMALL);
-         contents.addAll(createLabel("", FONT_SIZE_SMALL), labelClassroomNumber, labelState);
+         Node labelState = createLabel(messageFree, fontSizeSmall);
+         contents.addAll(createLabel("", fontSizeSmall), labelClassroomNumber, labelState);
       }
+
+      return boxNode;
    }
 
    private String formatString(ClassroomOccupancy classroom) {
@@ -109,31 +146,6 @@ public final class MainView extends BorderPane {
 //      return number < 100
 //            ? "0" + number
 //            : String.valueOf(number);
-   }
-
-   private List<ClassroomNode> initEmptyNodes() {
-      List<ClassroomNode> result = new ArrayList<>(GRID_SIZE);
-      for (int i = 0; i < GRID_SIZE; i++) {
-         result.add(new ClassroomNode());
-      }
-      return result;
-   }
-
-   private Node createGrid(List<? extends Node> nodes) {
-      GridPane grid = new GridPane();
-      grid.setHgap(18);
-      grid.setVgap(18);
-//      grid.setGridLinesVisible(true);
-//      grid.setPadding(new Insets(20, 20, 20, 20));
-
-      for (int i = 0; i < GRID_SIZE; i++) {
-         int row = i / GRID_COLUMNS;
-         int column = i - row * GRID_COLUMNS;
-
-         Node node = nodes.get(i);
-         grid.add(node, column, row);
-      }
-      return grid;
    }
 
    public void displayWarning(Exception exception) {

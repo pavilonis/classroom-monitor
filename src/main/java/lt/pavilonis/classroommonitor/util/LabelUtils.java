@@ -12,7 +12,7 @@ public class LabelUtils {
 
    private static final String FONT = "SansSerif";
 
-   public static Node createLabel(String text, int size) {
+   public static Node createLabel(String text, double size) {
       Text textNode = new Text(text);
       textNode.setFont(Font.font(FONT, FontWeight.NORMAL, size));
       return textNode;

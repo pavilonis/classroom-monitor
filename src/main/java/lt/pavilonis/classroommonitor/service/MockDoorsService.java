@@ -31,17 +31,17 @@ public class MockDoorsService implements DoorsService {
    @SneakyThrows
    @Override
    public List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressConsumer) {
-      delay(progressConsumer);
+//      delay(progressConsumer);
 
-      return IntStream.range(0, MainView.GRID_SIZE)
-            .map(i -> randomInt(100, 200))
+      return IntStream.range(0, 80)
+            .map(i -> randomInt(100, 900))
             .mapToObj(String::valueOf)
             .map(number -> new ClassroomOccupancy(number, randomBoolean(), randomLocalDateTime()))
             .toList();
    }
 
    private void delay(Consumer<Double> progressConsumer) throws InterruptedException {
-      int testDataFetchSteps = 20;
+      int testDataFetchSteps = 10;
       for (int i = 1; i <= testDataFetchSteps; i++) {
          double progress = i / (double) testDataFetchSteps;
          log.info("Test data progress: {}", progress);

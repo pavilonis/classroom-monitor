@@ -46,6 +46,10 @@ public class PeriodicalRunner {
          List<ClassroomOccupancy> doors = doorsService.fetchDoors(
                progress -> footer.updateProgress(progress, true));
 
+         if (doors.isEmpty()) {
+            throw new IllegalStateException("Empty doors response");
+         }
+
          Platform.runLater(() -> view.update(doors));
 
       } catch (Exception e) {

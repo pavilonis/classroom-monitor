@@ -25,10 +25,11 @@ api.auth.password=admin
 api.uri=http://localhost:8080  
 api.levels=1  
 api.building=SCHOOL  
-api.test-mode=FALSE  
-api.request.interval=5000  
-font.size.title=94  
-header.text=Test Header Text
+
+api.test-mode=true
+api.request.interval=30
+screen.classrooms.limit=21
+screen.header.text=Test Header Text
 ```
 
 Build project JAR file by running maven `clean` and `package` commands.  
