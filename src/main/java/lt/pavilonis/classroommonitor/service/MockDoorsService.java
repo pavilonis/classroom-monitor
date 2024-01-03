@@ -3,7 +3,6 @@ package lt.pavilonis.classroommonitor.service;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lt.pavilonis.classroommonitor.dto.ClassroomOccupancy;
-import lt.pavilonis.classroommonitor.ui.MainView;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +27,8 @@ public class MockDoorsService implements DoorsService {
       log.info("Using {}", this.getClass().getSimpleName());
    }
 
-   @SneakyThrows
    @Override
-   public List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressConsumer) {
-//      delay(progressConsumer);
-
+   public List<ClassroomOccupancy> fetchDoors() {
       return IntStream.range(0, 80)
             .map(i -> randomInt(100, 900))
             .mapToObj(String::valueOf)
@@ -40,7 +36,9 @@ public class MockDoorsService implements DoorsService {
             .toList();
    }
 
-   private void delay(Consumer<Double> progressConsumer) throws InterruptedException {
+   @SneakyThrows
+   @Override
+   public void updateStatuses(Consumer<Double> progressConsumer) {
       int testDataFetchSteps = 10;
       for (int i = 1; i <= testDataFetchSteps; i++) {
          double progress = i / (double) testDataFetchSteps;

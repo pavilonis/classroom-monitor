@@ -28,8 +28,9 @@ public class PeriodicalRunner {
 
    @Value("${api.request.interval}")
    private int updateDelay;
+   private boolean initialRun = true;
 
-   @Scheduled(fixedDelayString = "${api.request.interval}", timeUnit = TimeUnit.SECONDS)
+   @Scheduled(fixedDelayString = "${api.request.interval}", timeUnit = TimeUnit.SECONDS, initialDelay = 1)
    public void updateData() {
       if (updateFinished == null) {
          // This "if" should never be true
@@ -43,14 +44,13 @@ public class PeriodicalRunner {
       Platform.runLater(view::clearWarnings);
 
       try {
-         List<ClassroomOccupancy> doors = doorsService.fetchDoors(
-               progress -> footer.updateProgress(progress, true));
-
-         if (doors.isEmpty()) {
-            throw new IllegalStateException("Empty doors response");
+         if (initialRun) {
+            displayDoors();
+            initialRun = false;
          }
 
-         Platform.runLater(() -> view.update(doors));
+         doorsService.updateStatuses(progress -> footer.updateProgress(progress, true));
+         displayDoors();
 
       } catch (Exception e) {
          Platform.runLater(() -> view.displayWarning(e));
@@ -59,6 +59,15 @@ public class PeriodicalRunner {
          updateFinished = Instant.now();
          log.info("Periodic door fetch: FINISHED");
       }
+   }
+
+   private void displayDoors() {
+      List<ClassroomOccupancy> doors = doorsService.fetchDoors();
+      if (doors.isEmpty()) {
+         throw new IllegalStateException("Empty doors response");
+      }
+
+      Platform.runLater(() -> view.update(doors));
    }
 
    @Scheduled(fixedRate = 100)

@@ -40,48 +40,11 @@ public class SoapDoorsService implements DoorsService {
    }
 
    @Override
-   public List<ClassroomOccupancy> fetchDoors(Consumer<Double> progressConsumer) {
+   public void updateStatuses(Consumer<Double> progressConsumer) {
       var start = LocalDateTime.now();
-      updateDoorStatuses(progressConsumer);
-
-      List<ClassroomOccupancy> result = fetchUpdatedDoors();
-      progressConsumer.accept(1d);
-      log.info("Request completed [entries={}, t={}]", result.size(), TimeUtils.duration(start));
-      return result;
-   }
-
-   private List<WirelessDoor> fetchDoors() {
-      LocalDateTime start = LocalDateTime.now();
-      WirelessResultDoorList doorList = soapService.doorGetAll(username, password);
-      List<WirelessDoor> doors = doorList.getWirelessDoor();
-
-      if (doors.isEmpty()) {
-         log.warn("Received empty doors response in {}. " +
-               "This can happen because of incorrect service username/password", TimeUtils.duration(start));
-      } else  {
-         log.info("Received {} doors in {}", doors.size(), TimeUtils.duration(start));
-      }
-      return doors;
-   }
-
-   private List<ClassroomOccupancy> fetchUpdatedDoors() {
-      log.info("Fetching updated doors");
-      List<ClassroomOccupancy> result = new ArrayList<>();
-      List<WirelessDoor> updatedDoors = fetchDoors();
-
-      for (WirelessDoor door : updatedDoors) {
-         ClassroomOccupancy occupancy = createClassroomOccupancy(door);
-         result.add(occupancy);
-      }
-      log.info("Updated doors fetching: FINISHED");
-      return result;
-   }
-
-   private void updateDoorStatuses(Consumer<Double> progressMonitor) {
       log.info("Starting doors status update");
-      List<WirelessDoor> doors = fetchDoors();
+      List<WirelessDoor> doors = requestDoors();
 
-      LocalDateTime start = LocalDateTime.now();
       int counter = 1;
       int successCounter = 0;
       for (WirelessDoor door : doors) {
@@ -96,10 +59,40 @@ public class SoapDoorsService implements DoorsService {
             log.error("Could not update door {}", door.getDoorName(), e);
 
          } finally {
-            progressMonitor.accept(counter / (double) doors.size() * 0.9);
+            progressConsumer.accept(counter / (double) doors.size() * 0.9);
          }
       }
       log.info("Updated {}/{} doors in {}", successCounter, doors.size(), TimeUtils.duration(start));
+
+      log.info("Request completed [entries={}, t={}]", doors.size(), TimeUtils.duration(start));
+   }
+
+   private List<WirelessDoor> requestDoors() {
+      LocalDateTime start = LocalDateTime.now();
+      WirelessResultDoorList doorList = soapService.doorGetAll(username, password);
+      List<WirelessDoor> doors = doorList.getWirelessDoor();
+
+      if (doors.isEmpty()) {
+         log.warn("Received empty doors response in {}. " +
+               "This can happen because of incorrect service username/password", TimeUtils.duration(start));
+      } else  {
+         log.info("Received {} doors in {}", doors.size(), TimeUtils.duration(start));
+      }
+      return doors;
+   }
+
+   @Override
+   public List<ClassroomOccupancy> fetchDoors() {
+      log.info("Fetching updated doors");
+      List<ClassroomOccupancy> result = new ArrayList<>();
+      List<WirelessDoor> updatedDoors = requestDoors();
+
+      for (WirelessDoor door : updatedDoors) {
+         ClassroomOccupancy occupancy = createClassroomOccupancy(door);
+         result.add(occupancy);
+      }
+      log.info("Updated doors fetching: FINISHED");
+      return result;
    }
 
    private ClassroomOccupancy createClassroomOccupancy(WirelessDoor door) {
