@@ -28,10 +28,9 @@ public class PeriodicalRunner {
 
    @Value("${api.request.interval}")
    private int updateDelay;
-   private boolean initialRun = true;
 
    @Scheduled(fixedDelayString = "${api.request.interval}", timeUnit = TimeUnit.SECONDS, initialDelay = 1)
-   public void updateData() {
+   public void refreshView() {
       if (updateFinished == null) {
          // This "if" should never be true
          log.debug("Skipping update: busy");
@@ -44,12 +43,7 @@ public class PeriodicalRunner {
       Platform.runLater(view::clearWarnings);
 
       try {
-         if (initialRun) {
-            displayDoors();
-            initialRun = false;
-         }
 
-         doorsService.updateStatuses(progress -> footer.updateProgress(progress, true));
          displayDoors();
 
       } catch (Exception e) {
@@ -60,6 +54,33 @@ public class PeriodicalRunner {
          log.info("Periodic door fetch: FINISHED");
       }
    }
+
+   @Scheduled(cron = "${api.request.status-update.cron:-}")
+   public void requestDoorsStatusUpdate() {
+      if (updateFinished == null) {
+         // This "if" should never be true
+         log.debug("Skipping update: busy");
+         return;
+      }
+
+      updateFinished = null;
+      log.info("Periodic door status update request: STARTING");
+      Platform.runLater(view::clearWarnings);
+
+      try {
+
+         doorsService.updateStatuses(progress -> footer.updateProgress(progress, true));
+
+      } catch (Exception e) {
+         Platform.runLater(() -> view.displayWarning(e));
+
+      } finally {
+         updateFinished = Instant.now();
+         log.info("Periodic door status update request: FINISHED");
+      }
+   }
+
+
 
    private void displayDoors() {
       List<ClassroomOccupancy> doors = doorsService.fetchDoors();

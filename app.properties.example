@@ -6,3 +6,6 @@ screen.header.text=Test Header Text
 soap.endpoint.url=https://localhost
 soap.username=aaa
 soap.password=bbb
+
+#seconds minutes hours day-of-month month day-of-week
+api.request.status-update.cron=0 0 3 * * ?
